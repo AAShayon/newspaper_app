@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:newspaper_app/feature/auth/presentation/login.dart';
 
-import 'config/theme/app_theme.dart';
+import 'app/config/theme/app_theme.dart';
+import 'app/feature/auth/presentation/login.dart';
+
 
 void main() {
   runApp(const NewspaperApp());
