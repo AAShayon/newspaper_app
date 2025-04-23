@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'color.dart';
 
@@ -8,35 +9,35 @@ class TextFontStyle {
   TextFontStyle._();
 
   // Fixed font sizes for mobile
-  static const double fontSizeSmall = 12.0;
-  static const double fontSizeMedium = 15.0;
-  static const double fontSizeLarge = 18.0;
+  static double fontSizeSmall = 12.sp;
+  static double fontSizeMedium = 15.sp;
+  static double fontSizeLarge = 18.sp;
 
   // Styles for different text types
   static TextStyle smallText(BuildContext context) => _getTextStyle(
-    context,
-    fontSizeSmall,
-    FontWeight.normal,
-  );
+        context,
+        fontSizeSmall,
+        FontWeight.normal,
+      );
 
   static TextStyle mediumText(BuildContext context) => _getTextStyle(
-    context,
-    fontSizeMedium,
-    FontWeight.normal,
-  );
+        context,
+        fontSizeMedium,
+        FontWeight.normal,
+      );
 
   static TextStyle largeText(BuildContext context) => _getTextStyle(
-    context,
-    fontSizeLarge,
-    FontWeight.bold,
-  );
+        context,
+        fontSizeLarge,
+        FontWeight.bold,
+      );
 
   // Helper method to create text styles
   static TextStyle _getTextStyle(
-      BuildContext context,
-      double fontSize,
-      FontWeight fontWeight,
-      ) {
+    BuildContext context,
+    double fontSize,
+    FontWeight fontWeight,
+  ) {
     return GoogleFonts.roboto(
       color: AppColor.textColor(context),
       fontSize: fontSize,
@@ -46,14 +47,14 @@ class TextFontStyle {
 
   // Helper Widget for Text with Dynamic Style
   static Widget myAppText(
-      BuildContext context,
-      String text, {
-        TextStyleType style = TextStyleType.medium,
-        Color? color,
-        double? textSize,
-        String fontFamily = "Roboto",
-        FontWeight fontWeight = FontWeight.normal,
-      }) {
+    BuildContext context,
+    String text, {
+    TextStyleType style = TextStyleType.medium,
+    Color? color,
+    double? textSize,
+    String fontFamily = "Roboto",
+    FontWeight fontWeight = FontWeight.normal,
+  }) {
     final TextStyle baseStyle;
     switch (style) {
       case TextStyleType.small:
@@ -63,7 +64,6 @@ class TextFontStyle {
         baseStyle = largeText(context);
         break;
       case TextStyleType.medium:
-      default:
         baseStyle = mediumText(context);
         break;
     }
