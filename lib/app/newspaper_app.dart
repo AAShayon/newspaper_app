@@ -19,17 +19,19 @@ class NewspaperApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return DismissKeyboard(
-          child: GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Newspaper App',
-            theme: AppTheme.lightTheme(context),
-            darkTheme: AppTheme.darkTheme(context),
-            themeMode: ThemeMode.system,
-            home: child,
-            initialRoute: AppPages.splash,
-            getPages: AppPages.routes,
-            initialBinding: AuthBinding(),
-          ),
+          child: Obx((){
+            return GetMaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Newspaper App',
+              theme: AppTheme.lightTheme(context),
+              darkTheme: AppTheme.darkTheme(context),
+              themeMode: AppTheme.currentTheme.value,
+              home: child,
+              initialRoute: AppPages.splash,
+              getPages: AppPages.routes,
+              initialBinding: AuthBinding(),
+            );
+          })
         );
       },
       child: SplashScreen(),

@@ -11,6 +11,10 @@ import '../../feature/auth/domain/repositories/auth_repository.dart';
 import '../../feature/auth/domain/usecases/register_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_google.dart';
+import '../../feature/settings/data/datasouces/theme_local_datasource.dart';
+import '../../feature/settings/data/repositories/theme_repository_impl.dart';
+import '../../feature/settings/domain/repositories/theme_repositories.dart';
+import '../../feature/settings/domain/usecases/save_theme_preferences.dart';
 import '../firebase_configuration/firebase_config.dart';
 
 final locator = GetIt.instance;
@@ -51,4 +55,12 @@ Future<void> setupLocator() async{
       () => SignInWithEmail(locator.get<AuthRepository>()));
   locator.registerLazySingleton(
       () => RegisterWithEmail(locator.get<AuthRepository>()));
+  locator.registerLazySingleton<ThemeLocalDataSource>(() => ThemeLocalDataSource());
+
+  // Register Repositories
+  locator.registerLazySingleton<ThemeRepository>(() => ThemeRepositoryImpl(locator()));
+
+  // Register Use Cases
+  locator.registerLazySingleton(() => SaveThemePreference(locator()));
+
 }

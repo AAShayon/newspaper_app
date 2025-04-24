@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'color.dart';
 
 class AppTheme {
+  // Observable to track the current theme mode
+  static final Rx<ThemeMode> currentTheme = ThemeMode.system.obs;
+
+  static void updateTheme(ThemeMode mode) {
+    print("Updating theme to: $mode");
+    currentTheme.value = mode;
+  }
+
+  // Light Theme Definition
   static ThemeData lightTheme(BuildContext context) => ThemeData(
     brightness: Brightness.light,
     primaryColor: AppColor.primaryColor(context),
@@ -51,6 +61,7 @@ class AppTheme {
     ),
   );
 
+  // Dark Theme Definition
   static ThemeData darkTheme(BuildContext context) => ThemeData(
     brightness: Brightness.dark,
     primaryColor: AppColor.primaryColor(context),
