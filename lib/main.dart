@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import 'app/config/theme/app_theme.dart';
 import 'app/core/utils/helper/helper_methods.dart';
-import 'app/feature/auth/presentation/login.dart';
+import 'app/feature/auth/presentation/screen/login.dart';
 
 
 void main() {
@@ -32,7 +32,7 @@ class NewspaperApp extends StatelessWidget {
           ),
         );
       },
-      child: const LoginPage(),
+      child: const LoginScreen(),
     );
   }
 }
