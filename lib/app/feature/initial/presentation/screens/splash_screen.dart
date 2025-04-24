@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_plus/animated_splash_plus.dart';
-import 'package:get/get.dart';
+import 'package:newspaper_app/app/config/router/navigation_service.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
+import '../../../../config/router/all_routes.dart';
 
 
 class SplashScreen extends StatelessWidget {
@@ -11,6 +12,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedSplashPlus(
       config:  SplashConfig(
+        sunImage:AssetImage('assets/images/splashIcon.png') ,
         appName: 'Newspaper App',
         appNamePart1: 'News',
         appNamePart2: 'Paper',
@@ -27,7 +29,8 @@ class SplashScreen extends StatelessWidget {
       ),
       onAnimationComplete: () {
         // Navigate to the Initial Loader after the splash animation completes
-        // Get.toNamed(AppPages.loading);
+        NavigationService.navigateToUntilReplacement(AppPages.loading);
+
       },
     );
   }

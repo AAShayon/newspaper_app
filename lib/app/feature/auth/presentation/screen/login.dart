@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:newspaper_app/app/config/router/all_routes.dart';
+import 'package:newspaper_app/app/config/router/navigation_service.dart';
 
 import '../../../../config/theme/color.dart';
 import '../../../../config/theme/text_font_style.dart';
@@ -74,12 +76,12 @@ class LoginScreen extends StatelessWidget {
             CustomTextField(
               labelText: 'Password',
               hintText: 'Enter your password',
-              obscureText: true,
+              // obscureText: true,
               controller: _passwordController,
               suffixIcon: IconButton(
                 icon: Icon(Icons.visibility, color: AppColor.iconColor(context)),
                 onPressed: () {
-                  // Toggle password visibility logic here
+
                 },
               ),
             ),
@@ -124,7 +126,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Get.toNamed('/register'); // Navigate to Register Screen
+                  NavigationService.navigateTo(AppPages.registration);
                   },
                   child: TextFontStyle.myAppText(
                     context,

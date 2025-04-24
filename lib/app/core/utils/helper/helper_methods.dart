@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:app_settings/app_settings.dart'; // Required for AppSettings.openAppSettings
+import 'package:app_settings/app_settings.dart';
 
 import '../../../config/injection/di.dart';
 import '../../../config/theme/color.dart';
