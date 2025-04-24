@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:newspaper_app/app/config/router/navigation_service.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
 import 'package:newspaper_app/app/config/router/all_routes.dart';
+import 'package:newspaper_app/app/feature/auth/presentation/controllers/auth_controller.dart';
+
+import '../../../auth/domain/entities/user_entity.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -38,6 +42,7 @@ class DrawerWidget extends StatelessWidget {
       String? routeName, {
         bool isLogout = false,
       }) {
+    final AuthController authController=Get.find<AuthController>();
     return ListTile(
       leading: Icon(icon, color: AppColor.iconColor(context)), // Adaptive icon color
       title: Text(
@@ -50,7 +55,7 @@ class DrawerWidget extends StatelessWidget {
       onTap: () {
         NavigationService.goBack();
         if (isLogout) {
-          // Handle logout logic here
+          authController.logout();
           print("User logged out");
         } else if (routeName != null) {
           NavigationService.navigateTo(routeName);
@@ -67,38 +72,57 @@ class UserProfileSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 40.h, horizontal: 16.w),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: AppColor.borderColor(context), // Adaptive border color
-            child: Icon(Icons.person, color: AppColor.iconColor(context)), // Adaptive icon color
-          ),
-          SizedBox(width: 16.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "John Doe", // Replace with actual user name from Firebase or API
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColor.textColor(context), // Adaptive text color
+    final AuthController authController = Get.find<AuthController>();
+
+    return FutureBuilder<UserEntity?>(
+      future: authController.fetchUserInfo(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError || snapshot.data == null) {
+          return Center(child: Text('Failed to load user information'));
+        } else {
+          final UserEntity userInfo = snapshot.data!;
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 40.h, horizontal: 16.w),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: AppColor.borderColor(context),
+                  backgroundImage: userInfo.photoURL != null
+                      ? NetworkImage(userInfo.photoURL!)
+                      : null, // Use profile image URL if available
+                  child: userInfo.photoURL == null
+                      ? Icon(Icons.person, color: AppColor.iconColor(context))
+                      : null,
                 ),
-              ),
-              Text(
-                "View Profile", // Placeholder text
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColor.secondaryTextColor(context), // Adaptive rich text color
+                SizedBox(width: 16.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userInfo.displayName ?? 'No Name',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColor.textColor(context),
+                      ),
+                    ),
+                    Text(
+                      userInfo.email,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColor.secondaryTextColor(context),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 }

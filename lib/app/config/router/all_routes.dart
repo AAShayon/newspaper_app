@@ -36,7 +36,7 @@ class AppPages {
       page: () => const HomeScreen(),
       transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 500),
-      // binding: HomeScreenBindings()
+      binding: AuthBinding()
     ),
     GetPage(
       name: login,

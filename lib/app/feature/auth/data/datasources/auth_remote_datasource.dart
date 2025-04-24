@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:newspaper_app/app/feature/auth/domain/entities/user_entity.dart';
 
 abstract class AuthRemoteDataSource {
   Future<void> signInWithGoogle();
   Future<void> signInWithEmail(String email, String password);
   Future<void> registerWithEmail(String email, String password);
   bool isUserLoggedIn();
+  Future<void> signOut();
+  UserEntity getUserInfo();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -36,5 +39,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   bool isUserLoggedIn() {
     return _auth.currentUser != null;
+  }
+  @override
+  Future<void> signOut() async {
+    await _auth.signOut(); // Sign out from Firebase Auth
+    await _googleSignIn.signOut(); // Disconnect from Google Sign-In
+  }
+  @override
+  UserEntity getUserInfo() {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    return UserEntity(
+      uid: user.uid,
+      email: user.email ?? '',
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    );
   }
 }
