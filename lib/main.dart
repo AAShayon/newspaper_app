@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import 'app/config/theme/app_theme.dart';
+import 'app/core/utils/helper/helper_methods.dart';
 import 'app/feature/auth/presentation/login.dart';
 
 
@@ -19,13 +21,15 @@ class NewspaperApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Newspaper App',
-          theme: AppTheme.lightTheme(context),
-          darkTheme: AppTheme.darkTheme(context),
-          themeMode: ThemeMode.system,
-          home: child,
+        return DismissKeyboard(
+          child: GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Newspaper App',
+            theme: AppTheme.lightTheme(context),
+            darkTheme: AppTheme.darkTheme(context),
+            themeMode: ThemeMode.system,
+            home: child,
+          ),
         );
       },
       child: const LoginPage(),
