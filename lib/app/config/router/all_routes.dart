@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/bindings/auth_binding.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/screen/login.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/screen/register.dart';
-
-import '../../feature/initial/presentation/screens/initial_loader.dart';
+import '../../feature/home/presentation/screens/home.dart';
 import '../../feature/initial/presentation/screens/splash_screen.dart';
 
 class AppPages {
@@ -24,17 +23,18 @@ class AppPages {
   static final List<GetPage> routes = [
     GetPage(
       name: splash,
-      page: () => const SplashScreen(),
+      page: () =>  SplashScreen(),
       transition: Platform.isIOS ? Transition.cupertino : Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 500), // Optional
+      binding: AuthBinding()
     ),
-    // GetPage(
-    //   name: home,
-    //   page: () => const HomeScreen(),
-    //   transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
-    //   transitionDuration: const Duration(milliseconds: 500),
-    //   // binding: HomeScreenBindings()
-    // ),
+    GetPage(
+      name: home,
+      page: () => const HomeScreen(),
+      transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 500),
+      // binding: HomeScreenBindings()
+    ),
     GetPage(
       name: login,
       page: () =>  LoginScreen(),
@@ -48,12 +48,6 @@ class AppPages {
         transition: Platform.isIOS ? Transition.cupertino : Transition.zoom,
         transitionDuration: const Duration(milliseconds: 500),
         binding:AuthBinding()
-    ),
-    GetPage(
-      name: loading,
-      page: () =>  InitialLoader(),
-      transition: Platform.isIOS ? Transition.cupertino : Transition.zoom,
-      transitionDuration: const Duration(milliseconds: 500),
     ),
   ];
 }
