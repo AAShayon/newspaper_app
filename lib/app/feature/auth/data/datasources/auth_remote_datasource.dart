@@ -5,6 +5,7 @@ abstract class AuthRemoteDataSource {
   Future<void> signInWithGoogle();
   Future<void> signInWithEmail(String email, String password);
   Future<void> registerWithEmail(String email, String password);
+  bool isUserLoggedIn();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -31,5 +32,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> registerWithEmail(String email, String password) async {
     await _auth.createUserWithEmailAndPassword(email: email, password: password);
+  }
+  @override
+  bool isUserLoggedIn() {
+    return _auth.currentUser != null;
   }
 }

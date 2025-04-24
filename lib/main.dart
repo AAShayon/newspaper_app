@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:newspaper_app/app/feature/initial/presentation/screens/splash_screen.dart';
 
 import 'app/config/theme/app_theme.dart';
 import 'app/core/utils/helper/helper_methods.dart';
@@ -32,7 +33,7 @@ class NewspaperApp extends StatelessWidget {
           ),
         );
       },
-      child: const LoginScreen(),
+      child:  SplashScreen(),
     );
   }
 }

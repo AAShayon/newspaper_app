@@ -9,9 +9,10 @@
 //   static const String loading = '/loading';
 //   static const String splash = '/splash';
 //   static const String home = '/home';
-//   static const String webView = '/webView';
-//   static const String searchScreen = '/searchScreen';
-//   // static const String details = '/details';
+//   static const String login= '/login';
+//   static const String registration = '/registration';
+//   static const String details = '/details';
+//   static const String bookmark='/bookmark';
 //
 //   // Define GetPages with platform-specific transitions
 //   static final List<GetPage> routes = [
@@ -24,13 +25,6 @@
 //     GetPage(
 //       name: home,
 //       page: () => const HomeScreen(),
-//       transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
-//       transitionDuration: const Duration(milliseconds: 500),
-//       // binding: HomeScreenBindings()
-//     ),
-//     GetPage(
-//       name: searchScreen,
-//       page: () =>  SearchScreen(),
 //       transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
 //       transitionDuration: const Duration(milliseconds: 500),
 //       // binding: HomeScreenBindings()

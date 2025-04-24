@@ -4,78 +4,56 @@ class AppColor {
   // Private Constructor
   AppColor._();
 
-  // Gradients
+  // ========== Base Colors ==========
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
+  static const Color lightBlue = Color(0xFFA8C0FF);
+  static const Color blueAccent = Color(0xFF3F63F6);
+  static const Color darkPrimary = Color(0xFF1E1E2F);
+  static const Color softBlueAccent = Color(0xFF394867);
+  static const Color brightAccent = Color(0xFF4E6A8F);
+  static const Color lightGray = Color(0xFFB0B0B0);
+  static const Color inputFillLight = Color(0xFFF0F0F0);
+  static const Color richTextLight = Color(0xFF4E4E4E);
+
+  // ========== Gradients ==========
   static const LinearGradient softGradient = LinearGradient(
-    colors: [
-      Color(0xFFA8C0FF), // Light blue
-      Color(0xFF3F63F6), // Blue accent
-    ],
+    colors: [lightBlue, blueAccent],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient darkGradient = LinearGradient(
-    colors: [
-      Color(0xFF1E1E2F), // Dark primary
-      Color(0xFF394867), // Softer blue accent
-      Color(0xFF4E6A8F), // Bright accent
-    ],
+    colors: [darkPrimary, softBlueAccent, brightAccent],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Colors
-  static Color background(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF1E1E2F) // Dark background
-        : const Color(0xFFFFFFFF); // Light background
-  }
+  // ========== Themed Color Getters ==========
+  static Color background(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? darkPrimary : white;
 
-  static Color primaryColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF394867) // Dark primary
-        : const Color(0xFF3F63F6); // Light primary
-  }
+  static Color primaryColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? softBlueAccent : blueAccent;
 
-  static Color textColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFFFFFFFF) // Light text for dark mode
-        : const Color(0xFF000000); // Dark text for light mode
-  }
+  static Color textColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? white : black;
 
-  static Color borderColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF4E6A8F) // Dark border
-        : const Color(0xFFB0B0B0); // Light border
-  }
+  static Color borderColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? brightAccent : lightGray;
 
-  static Color fillColorTextFromField(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF394867) // Dark fill color
-        : const Color(0xFFF0F0F0); // Light fill color
-  }
+  static Color fillColorTextFromField(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? softBlueAccent : inputFillLight;
 
-  static Color iconColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF4E6A8F) // Dark icon color
-        : const Color(0xFF3F63F6); // Light icon color
-  }
+  static Color iconColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? brightAccent : blueAccent;
 
-  static Color buttonColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF4E6A8F) // Dark button color
-        : const Color(0xFF3F63F6); // Light button color
-  }
+  static Color buttonColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? brightAccent : blueAccent;
 
-  static Color richTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFFB0B0B0) // Light gray for dark mode
-        : const Color(0xFF4E4E4E); // Darker gray for light mode
-  }
+  static Color richTextColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? lightGray : richTextLight;
 
-  static LinearGradient gradient(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? darkGradient
-        : softGradient;
-  }
+  static LinearGradient gradient(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? darkGradient : softGradient;
 }

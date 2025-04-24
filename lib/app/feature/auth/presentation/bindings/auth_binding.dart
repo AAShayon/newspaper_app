@@ -16,6 +16,7 @@ class AuthBinding implements Bindings {
 
     // Controller
     Get.lazyPut(() => AuthController(
+      authRepository: Get.find(),
       signInWithGoogle: Get.find(),
       signInWithEmail: Get.find(),
       registerWithEmail: Get.find(),

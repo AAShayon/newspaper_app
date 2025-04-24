@@ -36,4 +36,9 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e.toString());
     }
   }
+  @override
+  bool isUserLoggedIn() {
+    return remoteDataSource.isUserLoggedIn();
+  }
+
 }
