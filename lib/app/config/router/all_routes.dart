@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/bindings/auth_binding.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/screen/login.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/screen/register.dart';
+import 'package:newspaper_app/app/feature/home/presentation/bindings/home_binding.dart';
+import 'package:newspaper_app/app/feature/home/presentation/screens/article_details_screen.dart';
 import 'package:newspaper_app/app/feature/settings/presentation/bindings/settings_bindings.dart';
 import 'package:newspaper_app/app/feature/settings/presentation/screens/settings_screen.dart';
 import '../../feature/home/presentation/screens/home.dart';
@@ -33,10 +35,10 @@ class AppPages {
     ),
     GetPage(
       name: home,
-      page: () => const HomeScreen(),
+      page: () =>  HomeScreen(),
       transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 500),
-      binding: AuthBinding()
+      binding: HomeBinding()
     ),
     GetPage(
       name: login,
@@ -58,6 +60,13 @@ class AppPages {
         transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
         transitionDuration: const Duration(milliseconds: 500),
         binding:SettingsBinding()
+    ),
+    GetPage(
+        name: details,
+        page: () =>  ArticleDetailsScreen(),
+        transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
+        transitionDuration: const Duration(milliseconds: 500),
+
     ),
   ];
 }

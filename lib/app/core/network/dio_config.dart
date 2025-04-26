@@ -43,27 +43,35 @@ class DioService {
 
   Dio get instance => _dio;
 
-  /// Custom GET request with Hive-based caching
-  Future<dynamic> getWithCache(String path, {Duration? cacheDuration}) async {
+  /// Custom GET request with Hive-based caching and query parameters
+  Future<dynamic> getWithCache(String path, {Duration? cacheDuration, Map<String, dynamic>? queryParameters}) async {
+    final cacheKey = queryParameters != null ? '$path?${_generateCacheKey(queryParameters)}' : path;
+
     // Check if data is available in the cache
-    final cachedData = await HiveCacheManager.getCache(path);
+    final cachedData = await HiveCacheManager.getCache(cacheKey);
     if (cachedData != null) {
-      log("Cache hit for $path");
+      log("Cache hit for $cacheKey");
       return cachedData;
     }
 
     // If not cached, make the API request
     try {
-      final response = await _dio.get(path);
-      log("API response for $path: ${response.data}");
+      final response = await _dio.get(path, queryParameters: queryParameters);
+      log("API response for $cacheKey: ${response.data}");
 
       // Save the response to cache
-      await HiveCacheManager.saveCache(path, response.data, duration: cacheDuration);
+      await HiveCacheManager.saveCache(cacheKey, response.data, duration: cacheDuration);
       return response.data;
     } catch (e) {
-      log("API error for $path: $e");
+      log("API error for $cacheKey: $e");
       rethrow; // Re-throw the error for further handling
     }
   }
 
+  /// Generate a unique string for query parameters
+  String _generateCacheKey(Map<String, dynamic> queryParams) {
+    return queryParams.entries
+        .map((entry) => '${entry.key}=${entry.value}')
+        .join('&');
+  }
 }

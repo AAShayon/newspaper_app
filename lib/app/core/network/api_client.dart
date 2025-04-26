@@ -1,7 +1,6 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
-import 'package:newspaper_app/app/core/network/dio_config.dart';
+import '../../config/cache/hive_cache_manager.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -27,17 +26,37 @@ class ApiClient {
   Future<Map<String, dynamic>> getWithCache(
       String path, {
         Duration? cacheDuration,
+        Map<String, dynamic>? queryParameters,
       }) async {
     try {
-      final response =
-      await DioService().getWithCache(path, cacheDuration: cacheDuration);
-      return response as Map<String, dynamic>;
+      final cacheKey = queryParameters != null
+          ? '$path?${_generateCacheKey(queryParameters)}'
+          : path;
+
+      // Check if data is available in the cache
+      final cachedData = await HiveCacheManager.getCache(cacheKey);
+      if (cachedData != null) {
+        log("Cache hit for $cacheKey");
+        return cachedData; // Return cached data
+      }
+
+      // If not cached, make the API request
+      final response = await _dio.get(path, queryParameters: queryParameters);
+      log("API response for $cacheKey: ${response.data}");
+
+      // Save the response to cache
+      await HiveCacheManager.saveCache(
+        cacheKey,
+        response.data as Map<String, dynamic>,
+        duration: cacheDuration,
+      );
+
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       log('GET with Cache $path -> Error: ${e.response?.data}');
       throw _extractErrorMessage(e);
     }
   }
-
 
   /// Private method to extract error message from DioException
   String _extractErrorMessage(DioException e) {
@@ -52,5 +71,12 @@ class ApiClient {
       return e.message!; // Dio message
     }
     return 'Something went wrong'; // Fallback message
+  }
+
+  /// Generate a unique string for query parameters
+  String _generateCacheKey(Map<String, dynamic> queryParams) {
+    return queryParams.entries
+        .map((entry) => '${entry.key}=${entry.value}')
+        .join('&');
   }
 }

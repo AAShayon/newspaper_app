@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -53,10 +55,10 @@ class DrawerWidget extends StatelessWidget {
         ),
       ),
       onTap: () {
-        NavigationService.goBack();
+        // NavigationService.goBack();
         if (isLogout) {
           authController.logout();
-          print("User logged out");
+          log("User logged out");
         } else if (routeName != null) {
           NavigationService.navigateTo(routeName);
         }

@@ -13,6 +13,10 @@ import '../../feature/auth/domain/usecases/get_user_info.dart';
 import '../../feature/auth/domain/usecases/register_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_google.dart';
+import '../../feature/home/data/datasources/news_remote_datasource.dart';
+import '../../feature/home/data/repositories/news_repository_impl.dart';
+import '../../feature/home/domain/repositories/news_repository.dart';
+import '../../feature/home/domain/usecases/get_top_headlines.dart';
 import '../../feature/settings/data/datasouces/theme_local_datasource.dart';
 import '../../feature/settings/data/repositories/theme_repository_impl.dart';
 import '../../feature/settings/domain/repositories/theme_repositories.dart';
@@ -69,4 +73,8 @@ Future<void> setupLocator() async {
 
   // Register Use Cases
   locator.registerLazySingleton(() => SaveThemePreference(locator()));
+
+  locator.registerLazySingleton<NewsRemoteDataSource>(() => NewsRemoteDataSourceImpl(locator<ApiClient>()));
+  locator.registerLazySingleton<NewsRepository>(() => NewsRepositoryImpl(locator<NewsRemoteDataSource>()));
+  locator.registerLazySingleton(() => GetTopHeadlines(locator.get<NewsRepository>()));
 }

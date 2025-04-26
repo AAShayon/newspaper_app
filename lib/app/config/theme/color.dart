@@ -66,6 +66,8 @@ class AppColor {
 
   static Color richTextColor(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark ? secondaryTextDark : richTextLight;
+  static Color linkColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? accentTeal : primaryBlue;
 
   static LinearGradient gradient(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark

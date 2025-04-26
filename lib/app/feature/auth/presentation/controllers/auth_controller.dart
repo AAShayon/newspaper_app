@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
+import 'package:newspaper_app/app/config/router/navigation_service.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/get_user_info.dart';
@@ -28,17 +29,17 @@ class AuthController extends GetxController {
 
   Future<void> handleGoogleSignIn() async {
     final result = await signInWithGoogle.call();
-    result.fold((failure) => Get.snackbar('Error', failure), (_) => Get.toNamed('/home'));
+    result.fold((failure) => Get.snackbar('Error', failure), (_) => NavigationService.navigateToUntilReplacement('/home'));
   }
 
   Future<void> handleEmailSignIn(String email, String password) async {
     final result = await signInWithEmail.call(email, password);
-    result.fold((failure) => Get.snackbar('Error', failure), (_) => Get.toNamed('/home'));
+    result.fold((failure) => Get.snackbar('Error', failure), (_) => NavigationService.navigateToUntilReplacement('/home'));
   }
 
   Future<void> handleEmailRegister(String email, String password) async {
     final result = await registerWithEmail.call(email, password);
-    result.fold((failure) => Get.snackbar('Error', failure), (_) => Get.toNamed('/home'));
+    result.fold((failure) => Get.snackbar('Error', failure), (_) => NavigationService.navigateToUntilReplacement('/home'));
   }
   bool isUserLoggedIn() {
     return authRepository.isUserLoggedIn();
@@ -48,7 +49,7 @@ class AuthController extends GetxController {
     result.fold(
           (failure) => Get.snackbar('Error', failure),
           (_) {
-        Get.offAllNamed('/login');
+        NavigationService.navigateToUntilReplacement('/login');
         log("User logged out successfully");
       },
     );
