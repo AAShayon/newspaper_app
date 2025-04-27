@@ -49,7 +49,7 @@ class BookmarkController extends GetxController {
 
   Future<void> fetchBookmarks() async {
     try {
-      final currentUser = Get.find<FirebaseAuth>().currentUser;
+      final currentUser = locator.get<FirebaseAuth>().currentUser;
       if (currentUser != null) {
         final fetchedBookmarks = await getBookmarksUseCase.call(currentUser.uid);
         bookmarks.assignAll(fetchedBookmarks);
