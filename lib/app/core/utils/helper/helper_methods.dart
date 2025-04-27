@@ -1,12 +1,9 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:app_settings/app_settings.dart';
 import '../../../config/theme/color.dart';
-import '../../../config/router/navigation_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class DismissKeyboard extends StatelessWidget {
   final Widget child;
@@ -25,22 +22,7 @@ class DismissKeyboard extends StatelessWidget {
     );
   }
 }
-void initiateInternetChecker() {
-  InternetConnectionChecker.createInstance().onStatusChange.listen((status) {
-    switch (status) {
-      case InternetConnectionStatus.connected:
-        break;
-      case InternetConnectionStatus.disconnected:
-        if (NavigationService.context != null) {
-          buildShowNoInternetDialog(NavigationService.context!, () {});
-        }
-        break;
-      case InternetConnectionStatus.slow:
-        log("Internet connection is slow.");
-        break;
-    }
-  });
-}
+
 
 
 void setStatusBarWithRotation(BuildContext context) {
@@ -89,11 +71,16 @@ Future<bool> showExitConfirmationDialog(BuildContext context) async {
     ),
   ) ?? false;
 }
+Future<bool> isConnectedToInternet() async {
+  final connectivityResult = await Connectivity().checkConnectivity();
+  return connectivityResult != ConnectivityResult.none;
+}
 
-Future<dynamic> buildShowNoInternetDialog(
-    BuildContext context, Function onDismiss) {
-  return showCupertinoDialog(
+/// Shows a dialog when there's no internet connection.
+Future<void> showNoInternetDialog(BuildContext context) async {
+  await showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (context) => CupertinoAlertDialog(
       title: const Text('No Internet Connection'),
       content: const Text(
@@ -104,16 +91,6 @@ Future<dynamic> buildShowNoInternetDialog(
           child: const Text('Cancel'),
           onPressed: () {
             Navigator.pop(context);
-            onDismiss();
-          },
-        ),
-        CupertinoDialogAction(
-          child: const Text('Open WiFi'),
-          onPressed: () {
-            Navigator.pop(context);
-            onDismiss();
-            AppSettings.openAppSettings(type: AppSettingsType.wifi);
-
           },
         ),
       ],

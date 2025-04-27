@@ -35,7 +35,7 @@ final appData = locator.get<GetStorage>();
 
 Future<void> setupLocator() async {
   await FirebaseConfig.initialize();
-  initiateInternetChecker();
+  // initiateInternetChecker();
   // Register GetStorage
   await GetStorage.init();
   locator.registerSingleton<GetStorage>(GetStorage());

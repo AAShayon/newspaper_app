@@ -37,11 +37,13 @@ class HomeScreen extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 16.w,
               mainAxisSpacing: 16.h,
-              childAspectRatio: .5,
+              childAspectRatio: .52,
             ),
             itemCount: homeController.articles.length,
             itemBuilder: (context, index) {
               final article = homeController.articles[index];
+              final isBookmarked = bookmarkController.isBookmarked(article.url);
+
               return GestureDetector(
                 onTap: () {
                   Get.toNamed('/details', arguments: article);
@@ -93,16 +95,21 @@ class HomeScreen extends StatelessWidget {
                       ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.bookmark_border,
-                            color: AppColor.iconColor(context),
-                          ),
-                          onPressed: () {
+                        child: Obx(() {
+                          // Check if the article is bookmarked
+                          final isBookmarked = bookmarkController.isBookmarked(article.url);
 
-                            bookmarkController.toggleBookmark('current_user_id', article.toModel().toJson());
-                          },
-                        ),
+                          return IconButton(
+                            icon: Icon(
+                              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                              color: isBookmarked ? Colors.blue : AppColor.iconColor(context),
+                            ),
+                            onPressed: () {
+                              print("Toggling bookmark for article: ${article.url}");
+                              bookmarkController.toggleBookmark('current_user_id', article.toModel().toJson());
+                            },
+                          );
+                        }),
                       ),
                     ],
                   ),

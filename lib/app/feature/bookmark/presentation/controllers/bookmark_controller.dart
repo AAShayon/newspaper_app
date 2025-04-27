@@ -14,19 +14,26 @@ class BookmarkController extends GetxController {
   RxList<Map<String, dynamic>> bookmarks = <Map<String, dynamic>>[].obs;
 
   Future<void> toggleBookmark(String userId, Map<String, dynamic> article) async {
-    if (bookmarks.any((bookmark) => bookmark['url'] == article['url'])) {
-      // Remove from bookmarks
+    final isAlreadyBookmarked = isBookmarked(article['url']);
+
+    if (isAlreadyBookmarked) {
       bookmarks.removeWhere((bookmark) => bookmark['url'] == article['url']);
     } else {
-      // Add to bookmarks
       bookmarks.add(article);
-      await saveBookmarkUseCase.call(userId, article);
     }
-  }
 
+    // Notify listeners about the state change
+    update();
+
+    // Save the updated bookmark state
+    await saveBookmarkUseCase.call(userId, article);
+  }
   Future<void> fetchBookmarks(String userId) async {
     final fetchedBookmarks = await getBookmarksUseCase.call(userId);
     bookmarks.assignAll(fetchedBookmarks);
+  }
+  bool isBookmarked(String url) {
+    return bookmarks.any((bookmark) => bookmark['url'] == url);
   }
 
   @override
