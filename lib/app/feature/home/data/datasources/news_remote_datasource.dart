@@ -14,10 +14,9 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
   @override
   Future<NewsModel> getTopHeadlines() async {
     try {
-      final response = await apiClient.getWithCache(
+      final response = await apiClient.get(
         ApiUrls.topHeadlines,
         queryParameters: {'sources': 'techcrunch', 'apiKey': ApiUrls.apiKey},
-        cacheDuration: const Duration(days: 30),
       );
       final Map<String, dynamic> data = Map<String, dynamic>.from(response);
       return NewsModel.fromJson(data);

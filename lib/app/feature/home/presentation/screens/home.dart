@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
 import 'package:newspaper_app/app/feature/home/presentation/widgets/drawer_widget.dart';
+import '../../../bookmark/presentation/controllers/bookmark_controller.dart';
 import '../controller/home_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -11,6 +12,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find<HomeController>();
+    final BookmarkController bookmarkController = Get.find<BookmarkController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -20,10 +22,8 @@ class HomeScreen extends StatelessWidget {
       drawer: DrawerWidget(),
       body: Obx(() {
         if (homeController.isLoading.value) {
-          // Show a loading indicator while fetching data
           return Center(child: CircularProgressIndicator());
         } else if (homeController.articles.isEmpty) {
-          // Handle the case where no articles are available
           return Center(
             child: Text(
               "No articles found",
@@ -31,41 +31,82 @@ class HomeScreen extends StatelessWidget {
             ),
           );
         } else {
-          // Display the list of articles
-          return ListView.builder(
+          return GridView.builder(
+            padding: EdgeInsets.all(16.w),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16.w,
+              mainAxisSpacing: 16.h,
+              childAspectRatio: .5,
+            ),
             itemCount: homeController.articles.length,
             itemBuilder: (context, index) {
               final article = homeController.articles[index];
-              return ListTile(
-                leading: article.urlToImage.isNotEmpty
-                    ? Image.network(
-                  article.urlToImage,
-                  width: 50.w,
-                  height: 50.h,
-                  fit: BoxFit.cover,
-                )
-                    : Icon(Icons.image_not_supported, size: 50.sp),
-                title: Text(
-                  article.title,
-                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: AppColor.textColor(context)),
-                ),
-                subtitle: Text(
-                  article.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 14.sp, color: AppColor.secondaryTextColor(context)),
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.bookmark_border, color: AppColor.iconColor(context)),
-                  onPressed: () {
-                    // Add bookmark logic here
-                    Get.snackbar('Bookmark', 'Article bookmarked!');
-                  },
-                ),
+              return GestureDetector(
                 onTap: () {
-                  // Navigate to the article details screen
                   Get.toNamed('/details', arguments: article);
                 },
+                child: Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
+                        child: Image.network(
+                          article.urlToImage.isNotEmpty
+                              ? article.urlToImage
+                              : 'https://via.placeholder.com/300x200',
+                          width: double.infinity,
+                          height: 150.h,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              article.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: AppColor.textColor(context),
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              article.description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: AppColor.secondaryTextColor(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.bookmark_border,
+                            color: AppColor.iconColor(context),
+                          ),
+                          onPressed: () {
+
+                            bookmarkController.toggleBookmark('current_user_id', article.toModel().toJson());
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           );

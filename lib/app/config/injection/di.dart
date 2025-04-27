@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,6 +14,12 @@ import '../../feature/auth/domain/usecases/get_user_info.dart';
 import '../../feature/auth/domain/usecases/register_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_google.dart';
+import '../../feature/bookmark/data/datasources/bookmark_local_datasource.dart';
+import '../../feature/bookmark/data/datasources/bookmark_remote_datasource.dart';
+import '../../feature/bookmark/data/repositories/bookmark_repository_impl.dart';
+import '../../feature/bookmark/domain/repositories/favorite_repository.dart';
+import '../../feature/bookmark/domain/use_cases/get_bookmarks_use_case.dart';
+import '../../feature/bookmark/domain/use_cases/save_bookmark_use_case.dart';
 import '../../feature/home/data/datasources/news_remote_datasource.dart';
 import '../../feature/home/data/repositories/news_repository_impl.dart';
 import '../../feature/home/domain/repositories/news_repository.dart';
@@ -41,6 +48,7 @@ Future<void> setupLocator() async {
       () => ApiClient(locator<DioService>().instance));
   // Register Firebase Auth and Google Sign-In
   locator.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  locator.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
   locator.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn());
 
   // Register AuthRemoteDataSource
@@ -77,4 +85,26 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<NewsRemoteDataSource>(() => NewsRemoteDataSourceImpl(locator<ApiClient>()));
   locator.registerLazySingleton<NewsRepository>(() => NewsRepositoryImpl(locator<NewsRemoteDataSource>()));
   locator.registerLazySingleton(() => GetTopHeadlines(locator.get<NewsRepository>()));
+
+  locator.registerLazySingleton<BookmarkRemoteDataSource>(
+        () => BookmarkRemoteDataSourceImpl(locator.get<FirebaseFirestore>()),
+  );
+  locator.registerLazySingleton<BookmarkLocalDataSource>(
+        () => BookmarkLocalDataSourceImpl(),
+  );
+
+  // Register Bookmark Repository
+  locator.registerLazySingleton<BookmarkRepository>(
+        () => BookmarkRepositoryImpl(
+      remoteDataSource: locator.get<BookmarkRemoteDataSource>(),
+      localDataSource: locator.get<BookmarkLocalDataSource>(),
+    ),
+  );
+
+  // Register Bookmark Use Cases
+  locator.registerLazySingleton(() => SaveBookmarkUseCase(locator.get<BookmarkRepository>()));
+  locator.registerLazySingleton(() => GetBookmarksUseCase(locator.get<BookmarkRepository>()));
+
+  // Register Bookmark Controller
+
 }

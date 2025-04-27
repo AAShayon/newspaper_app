@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/bindings/auth_binding.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/screen/login.dart';
 import 'package:newspaper_app/app/feature/auth/presentation/screen/register.dart';
+import 'package:newspaper_app/app/feature/bookmark/presentation/bindings/bookmark_bindings.dart';
+import 'package:newspaper_app/app/feature/bookmark/presentation/screens/bookmark_screen.dart';
 import 'package:newspaper_app/app/feature/home/presentation/bindings/home_binding.dart';
 import 'package:newspaper_app/app/feature/home/presentation/screens/article_details_screen.dart';
 import 'package:newspaper_app/app/feature/settings/presentation/bindings/settings_bindings.dart';
@@ -38,7 +40,14 @@ class AppPages {
       page: () =>  HomeScreen(),
       transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 500),
-      binding: HomeBinding()
+      binding: HomeBinding(),
+    ),
+    GetPage(
+      name: bookmark,
+      page: () =>  BookmarkScreen(),
+      transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 500),
+      binding: BookmarkBinding(),
     ),
     GetPage(
       name: login,
