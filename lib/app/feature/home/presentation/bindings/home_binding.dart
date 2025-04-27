@@ -10,7 +10,6 @@ class HomeBinding extends Bindings {
   @override
   void dependencies() {
     AuthBinding().dependencies();
-    BookmarkBinding().dependencies();
     Get.lazyPut<HomeController>(() => HomeController(getTopHeadlines: locator.get<GetTopHeadlines>()));
   }
 }

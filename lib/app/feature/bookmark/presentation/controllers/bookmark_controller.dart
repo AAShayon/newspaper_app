@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:newspaper_app/app/config/injection/di.dart';
+import '../../../../core/utils/bookmark_utils.dart';
 import '../../domain/use_cases/save_bookmark_use_case.dart';
 import '../../domain/use_cases/get_bookmarks_use_case.dart';
 
@@ -59,7 +60,8 @@ class BookmarkController extends GetxController {
   }
 
   bool isBookmarked(String url) {
-    return bookmarks.any((bookmark) => bookmark['url'] == url);
+    final bookmarkId = generateBookmarkId(url);
+    return bookmarks.any((bookmark) => generateBookmarkId(bookmark['url']) == bookmarkId);
   }
 
   @override

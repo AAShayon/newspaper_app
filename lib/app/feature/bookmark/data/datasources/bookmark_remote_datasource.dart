@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/utils/bookmark_utils.dart';
+
 abstract class BookmarkRemoteDataSource {
   Future<void> saveBookmark(String userId, Map<String, dynamic> article);
   Future<List<Map<String, dynamic>>> getBookmarks(String userId);
@@ -12,11 +14,12 @@ class BookmarkRemoteDataSourceImpl implements BookmarkRemoteDataSource {
 
   @override
   Future<void> saveBookmark(String userId, Map<String, dynamic> article) async {
+    final bookmarkId = generateBookmarkId(article['url']);
     await firestore
         .collection('users')
         .doc(userId)
         .collection('bookmarks')
-        .doc(article['url'].hashCode.toString())
+        .doc(bookmarkId)
         .set(article, SetOptions(merge: true));
   }
 
