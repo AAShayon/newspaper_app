@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:newspaper_app/app/config/injection/di.dart';
 import '../../domain/use_cases/save_bookmark_use_case.dart';
 import '../../domain/use_cases/get_bookmarks_use_case.dart';
 
@@ -13,25 +15,49 @@ class BookmarkController extends GetxController {
 
   RxList<Map<String, dynamic>> bookmarks = <Map<String, dynamic>>[].obs;
 
-  Future<void> toggleBookmark(String userId, Map<String, dynamic> article) async {
-    final isAlreadyBookmarked = isBookmarked(article['url']);
+  Future<void> toggleBookmark(Map<String, dynamic> article) async {
+    try {
+      final currentUser = locator.get<FirebaseAuth>().currentUser;
+      if (currentUser == null) {
+        Get.snackbar('Error', 'You must be logged in to bookmark articles');
+        return;
+      }
 
-    if (isAlreadyBookmarked) {
-      bookmarks.removeWhere((bookmark) => bookmark['url'] == article['url']);
-    } else {
-      bookmarks.add(article);
+      final userId = currentUser.uid;
+      final isAlreadyBookmarked = isBookmarked(article['url']);
+
+      if (isAlreadyBookmarked) {
+        bookmarks.removeWhere((bookmark) => bookmark['url'] == article['url']);
+      } else {
+        bookmarks.add(article);
+      }
+
+      await saveBookmarkUseCase.call(userId, article);
+      update();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to update bookmark: ${e.toString()}');
+      // Revert UI change if operation failed
+      if (isBookmarked(article['url'])) {
+        bookmarks.removeWhere((bookmark) => bookmark['url'] == article['url']);
+      } else {
+        bookmarks.add(article);
+      }
+      update();
     }
-
-    // Notify listeners about the state change
-    update();
-
-    // Save the updated bookmark state
-    await saveBookmarkUseCase.call(userId, article);
   }
-  Future<void> fetchBookmarks(String userId) async {
-    final fetchedBookmarks = await getBookmarksUseCase.call(userId);
-    bookmarks.assignAll(fetchedBookmarks);
+
+  Future<void> fetchBookmarks() async {
+    try {
+      final currentUser = Get.find<FirebaseAuth>().currentUser;
+      if (currentUser != null) {
+        final fetchedBookmarks = await getBookmarksUseCase.call(currentUser.uid);
+        bookmarks.assignAll(fetchedBookmarks);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to fetch bookmarks: ${e.toString()}');
+    }
   }
+
   bool isBookmarked(String url) {
     return bookmarks.any((bookmark) => bookmark['url'] == url);
   }
@@ -39,6 +65,6 @@ class BookmarkController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchBookmarks('current_user_id');
+    fetchBookmarks();
   }
 }

@@ -28,7 +28,7 @@ class BookmarkScreen extends StatelessWidget {
                   icon: Icon(Icons.delete),
                   onPressed: () {
                     // Remove from bookmarks
-                    controller.toggleBookmark('current_user_id', article);
+                    controller.toggleBookmark(article);
                   },
                 ),
               );

@@ -16,7 +16,8 @@ class BookmarkRemoteDataSourceImpl implements BookmarkRemoteDataSource {
         .collection('users')
         .doc(userId)
         .collection('bookmarks')
-        .add(article);
+        .doc(article['url'].hashCode.toString())
+        .set(article, SetOptions(merge: true));
   }
 
   @override

@@ -106,7 +106,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                             onPressed: () {
                               print("Toggling bookmark for article: ${article.url}");
-                              bookmarkController.toggleBookmark('current_user_id', article.toModel().toJson());
+                              bookmarkController.toggleBookmark( article.toModel().toJson());
                             },
                           );
                         }),
