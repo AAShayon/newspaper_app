@@ -12,7 +12,28 @@
           "package_name": "com.ans.newspaper_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "484093063546-adgvv3tadaopultl40doj7r6f4olmiug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ans.newspaper_app",
+            "certificate_hash": "e715d4f3d1d4cd60d4d750fb39facdf9d3f3b30b"
+          }
+        },
+        {
+          "client_id": "484093063546-tqtpfdda8tmgo1ro2g7342p01h6667oc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ans.newspaper_app",
+            "certificate_hash": "f81f5b1b23fc81b3af0f751c840dbaad21dccfd3"
+          }
+        },
+        {
+          "client_id": "484093063546-34dpbvrcjutvabvjm4tm9sopavtudp1a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAQ3EdH0Kyg4bmH7sqjBDcl-Px5O5PH4H8"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "484093063546-34dpbvrcjutvabvjm4tm9sopavtudp1a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "484093063546-d64f68hp60s4orii1vqqcqvdnbuabrii.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ans.newspaperApp"
+              }
+            }
+          ]
         }
       }
     }

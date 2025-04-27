@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:newspaper_app/app/feature/auth/domain/usecases/sign_out.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/dio_config.dart';
-import '../../core/utils/helper/helper_methods.dart';
 import '../../feature/auth/data/datasources/auth_remote_datasource.dart';
 import '../../feature/auth/data/repositories/auth_repository_impl.dart';
 import '../../feature/auth/domain/repositories/auth_repository.dart';
@@ -28,13 +27,12 @@ import '../../feature/settings/data/datasouces/theme_local_datasource.dart';
 import '../../feature/settings/data/repositories/theme_repository_impl.dart';
 import '../../feature/settings/domain/repositories/theme_repositories.dart';
 import '../../feature/settings/domain/usecases/save_theme_preferences.dart';
-import '../firebase_configuration/firebase_config.dart';
 
 final locator = GetIt.instance;
 final appData = locator.get<GetStorage>();
 
 Future<void> setupLocator() async {
-  await FirebaseConfig.initialize();
+
   // initiateInternetChecker();
   // Register GetStorage
   await GetStorage.init();

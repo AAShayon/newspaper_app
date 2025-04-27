@@ -72,8 +72,19 @@ Future<bool> showExitConfirmationDialog(BuildContext context) async {
   ) ?? false;
 }
 Future<bool> isConnectedToInternet() async {
+  // Check connectivity status
   final connectivityResult = await Connectivity().checkConnectivity();
-  return connectivityResult != ConnectivityResult.none;
+  if (connectivityResult == ConnectivityResult.none) {
+    return false; // No network connection
+  }
+
+  // Verify internet access by pinging a reliable server
+  try {
+    final result = await InternetAddress.lookup('google.com').timeout(const Duration(seconds: 5));
+    return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
+  } catch (_) {
+    return false; // Unable to reach the internet
+  }
 }
 
 /// Shows a dialog when there's no internet connection.
