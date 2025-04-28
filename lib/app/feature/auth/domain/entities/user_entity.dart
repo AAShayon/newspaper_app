@@ -2,12 +2,12 @@ class UserEntity {
   final String uid;
   final String email;
   final String? displayName;
-  final String? photoURL; // Add profile image URL
+  final String? photoURL;
 
   UserEntity({
     required this.uid,
     required this.email,
     this.displayName,
-    this.photoURL, // Optional field for profile image
+    this.photoURL,
   });
 }

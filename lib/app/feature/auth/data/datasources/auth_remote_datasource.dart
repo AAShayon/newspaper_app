@@ -6,9 +6,11 @@ abstract class AuthRemoteDataSource {
   Future<void> signInWithGoogle();
   Future<void> signInWithEmail(String email, String password);
   Future<void> registerWithEmail(String email, String password);
+  Future<void> updatePassword( String password);
   bool isUserLoggedIn();
   Future<void> signOut();
   UserEntity getUserInfo();
+
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -57,5 +59,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       displayName: user.displayName,
       photoURL: user.photoURL,
     );
+  }
+
+  @override
+  Future<void> updatePassword(String newPassword) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+
+    try {
+      if (user.providerData.any((info) => info.providerId == 'password')) {
+        final credential = EmailAuthProvider.credential(email: user.email!, password: newPassword);
+        await user.reauthenticateWithCredential(credential);
+      } else {
+        // Link the email/password credential for the first time
+        final credential = EmailAuthProvider.credential(email: user.email!, password: newPassword);
+        await user.linkWithCredential(credential);
+      }
+
+      // Update the password
+      await user.updatePassword(newPassword);
+    } catch (e) {
+      throw Exception('Failed to update password: $e');
+    }
   }
 }

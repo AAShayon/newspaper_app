@@ -13,6 +13,7 @@ import '../../feature/auth/domain/usecases/get_user_info.dart';
 import '../../feature/auth/domain/usecases/register_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_email.dart';
 import '../../feature/auth/domain/usecases/sign_in_with_google.dart';
+import '../../feature/auth/domain/usecases/update_password.dart';
 import '../../feature/bookmark/data/datasources/bookmark_local_datasource.dart';
 import '../../feature/bookmark/data/datasources/bookmark_remote_datasource.dart';
 import '../../feature/bookmark/data/repositories/bookmark_repository_impl.dart';
@@ -69,6 +70,7 @@ Future<void> setupLocator() async {
       () => RegisterWithEmail(locator.get<AuthRepository>()));
   locator.registerLazySingleton(
           () => SignOutUser(locator.get<AuthRepository>()));
+  locator.registerLazySingleton(() => UpdatePassword(locator.get<AuthRepository>()));
   locator.registerLazySingleton(() => GetUserInfo(locator.get<AuthRepository>()));
   locator.registerLazySingleton<ThemeLocalDataSource>(
       () => ThemeLocalDataSource());

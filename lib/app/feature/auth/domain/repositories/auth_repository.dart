@@ -9,4 +9,5 @@ abstract class AuthRepository {
   bool isUserLoggedIn();
   Future<Either<String, void>> signOut();
   Future<Either<String, UserEntity>> getUserInfo();
+  Future<Either<String, void>> updatePassword(String password);
 }

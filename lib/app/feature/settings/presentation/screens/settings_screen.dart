@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:newspaper_app/app/feature/settings/presentation/widgets/theme_selection_widget.dart';
+import '../../../auth/presentation/widgets/password_dialog.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -22,6 +23,16 @@ class SettingsScreen extends StatelessWidget {
             ),
             SizedBox(height: 8),
             ThemeSelectionWidget(),
+            SizedBox(height: 8),
+            ListTile(
+              title: Text("Change Password"),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => PasswordDialog(),
+                );
+              },
+            ),
           ],
         ),
       ),

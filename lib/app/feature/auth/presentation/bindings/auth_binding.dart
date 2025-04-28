@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:newspaper_app/app/feature/auth/domain/usecases/get_user_info.dart';
 import 'package:newspaper_app/app/feature/auth/domain/usecases/sign_out.dart';
+import 'package:newspaper_app/app/feature/auth/domain/usecases/update_password.dart';
 import '../../../../config/injection/di.dart';
 import '../../../bookmark/presentation/bindings/bookmark_bindings.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -19,7 +20,8 @@ class AuthBinding implements Bindings {
       signInWithEmail: locator.get<SignInWithEmail>(),
       registerWithEmail: locator.get<RegisterWithEmail>(),
       signOutUser: locator.get<SignOutUser>(),
-      getUserInfo: locator.get<GetUserInfo>()
+      getUserInfo: locator.get<GetUserInfo>(),
+      updatePassword: locator.get<UpdatePassword>()
     ));
     BookmarkBinding().dependencies();
   }
