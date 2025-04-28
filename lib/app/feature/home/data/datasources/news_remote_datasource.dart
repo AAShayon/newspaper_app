@@ -21,25 +21,17 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
     log("Cached data: ${cachedData?.toString() ?? 'No cached data'}");
 
-    // Check if valid cached data exists
-    if (cachedData != null && cachedData['expiry'] != null) {
+    // If cached data exists, use it directly
+    if (cachedData != null && cachedData['data'] != null) {
+      log("Using cached data.");
       try {
-        final expiryTime = DateTime.parse(cachedData['expiry']);
-        if (DateTime.now().isBefore(expiryTime)) {
-          log("Using valid cached data.");
-          return NewsModel.fromJson(cachedData['data']);
-        } else {
-          log("Cached data has expired.");
-        }
+        return NewsModel.fromJson(cachedData['data']);
       } catch (e) {
-        log("Error parsing expiry time: $e");
+        log("Error parsing cached data: $e");
       }
-    } else {
-      log("No expiry time found in cache.");
     }
 
-
-    // Fetch fresh data only if no valid cached data exists and the device is online
+    // If no cached data or error, fetch fresh from API if internet is available
     if (await isConnectedToInternet()) {
       log("Device is online. Fetching fresh data from API.");
       try {
@@ -48,29 +40,28 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
           queryParameters: {'sources': 'techcrunch', 'apiKey': ApiUrls.apiKey},
         );
 
+        log("API Response: $response");
+
+        if (response == null || response.isEmpty) {
+          throw Exception('Empty or null API response');
+        }
+
         final Map<String, dynamic> data = Map<String, dynamic>.from(response);
         final newsModel = NewsModel.fromJson(data);
 
-        // Save data to cache for 1 hour
+        // Save data to cache
         log("Saving fresh data to cache: ${data.toString()}");
-        await HiveCacheManager.saveCache(cacheKey, data, duration: Duration(hours: 1));
+        await HiveCacheManager.saveCache(cacheKey, data, duration: Duration(hours: 1)); // you can manage expiry internally if needed
 
         return newsModel;
       } catch (e) {
         log("Error fetching data from API: $e");
-        if (cachedData != null) {
-          log("Using cached data due to network error.");
-          return NewsModel.fromJson(cachedData['data']);
-        }
         throw Exception('Error fetching top headlines: $e');
       }
     } else {
-      log("Device is offline.");
-      if (cachedData != null) {
-        log("Using cached data due to no internet connection.");
-        return NewsModel.fromJson(cachedData['data']);
-      }
+      log("Device is offline and no valid cached data available.");
       throw Exception('No internet connection and no valid cached data available.');
     }
   }
+
 }

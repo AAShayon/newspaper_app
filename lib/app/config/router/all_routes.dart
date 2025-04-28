@@ -72,7 +72,7 @@ class AppPages {
     ),
     GetPage(
         name: details,
-        page: () =>  ArticleDetailsScreen(),
+        page: () =>  ArticleDetailsScreen(article: Get.arguments,),
         transition: Platform.isIOS ? Transition.cupertino : Transition.rightToLeft,
         transitionDuration: const Duration(milliseconds: 500),
 

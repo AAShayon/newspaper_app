@@ -23,6 +23,11 @@ class NewsRepositoryImpl implements NewsRepository {
           title: articleModel.title,
           description: articleModel.description,
           url: articleModel.url,
+          content: articleModel.content,
+          author: articleModel.author,
+          source: articleModel.source != null
+              ? SourceEntity.fromModel(articleModel.source!)
+              : null,
           urlToImage: articleModel.urlToImage,
           publishedAt: articleModel.publishedAt,
         ))

@@ -6,10 +6,16 @@ class NewsModel {
   NewsModel({required this.articles});
 
   factory NewsModel.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> articlesJson = json['articles'];
-    final articles =
-    articlesJson.map((article) => ArticleModel.fromJson(article)).toList();
-    return NewsModel(articles: articles);
+    if (json == null) {
+      throw Exception('Invalid JSON data for NewsModel');
+    }
+
+    return NewsModel(
+      articles: (json['articles'] as List<dynamic>?)
+          ?.map((article) => ArticleModel.fromJson(article))
+          .toList() ??
+          [],
+    );
   }
 
   Map<String, dynamic> toJson() {

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,12 +38,11 @@ class HomeScreen extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 16.w,
               mainAxisSpacing: 16.h,
-              childAspectRatio: .52,
+              childAspectRatio: .66,
             ),
             itemCount: homeController.articles.length,
             itemBuilder: (context, index) {
               final article = homeController.articles[index];
-              final isBookmarked = bookmarkController.isBookmarked(article.url);
 
               return GestureDetector(
                 onTap: () {
@@ -54,15 +54,16 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
-                        child: Image.network(
-                          article.urlToImage.isNotEmpty
-                              ? article.urlToImage
-                              : 'https://via.placeholder.com/300x200',
-                          width: double.infinity,
-                          height: 150.h,
-                          fit: BoxFit.cover,
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
+                          child: CachedNetworkImage(
+                            imageUrl: article.urlToImage ?? 'https://via.placeholder.com/150',
+                            width: double.infinity,
+                            fit: BoxFit.fitWidth,
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
                         ),
                       ),
                       Padding(
