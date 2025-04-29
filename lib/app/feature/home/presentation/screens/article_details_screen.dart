@@ -1,3 +1,5 @@
+// lib/app/feature/home/presentation/screens/article_details_screen.dart
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +12,7 @@ import '../utils/article_scraper.dart';
 class ArticleDetailsScreen extends StatefulWidget {
   final ArticleEntity article;
 
-  const ArticleDetailsScreen({Key? key, required this.article}) : super(key: key);
+  const ArticleDetailsScreen({super.key, required this.article});
 
   @override
   State<ArticleDetailsScreen> createState() => _ArticleDetailsScreenState();
@@ -18,7 +20,7 @@ class ArticleDetailsScreen extends StatefulWidget {
 
 class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   double textSizeFactor = 1.0; // Default text size factor
-  String? fullArticleContent;
+  Widget? fullArticleContent;
   bool isLoading = false;
 
   final ArticleScraper scraper = ArticleScraper();
@@ -59,19 +61,11 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
 
   Future<void> _fetchFullArticleContent() async {
     setState(() => isLoading = true);
-    try {
-      final content = await scraper.scrapeArticleContent(widget.article.url);
-      setState(() {
-        fullArticleContent = content;
-        isLoading = false;
-      });
-    } catch (e) {
-      print("Error scraping article: $e");
-      setState(() {
-        fullArticleContent = null;
-        isLoading = false;
-      });
-    }
+    final content = await scraper.scrapeArticleContent(widget.article.url);
+    setState(() {
+      fullArticleContent = content;
+      isLoading = false;
+    });
   }
 
   @override
@@ -237,20 +231,13 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             SizedBox(height: 16.h),
 
             // Full article content from web scraping
             if (isLoading)
-              Center(child: CircularProgressIndicator())
+              const Center(child: CircularProgressIndicator())
             else if (fullArticleContent != null)
-              Text(
-                fullArticleContent!,
-                style: TextStyle(
-                  fontSize: 16.sp * textSizeFactor,
-                  color: AppColor.secondaryTextColor(context),
-                ),
-              )
+              fullArticleContent!
             else
               Text(
                 "Could not load full article content.",
