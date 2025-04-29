@@ -5,11 +5,12 @@ import 'package:get/get.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../domain/entities/article_entities.dart';
+import '../utils/article_scraper.dart';
 
 class ArticleDetailsScreen extends StatefulWidget {
   final ArticleEntity article;
 
-  const ArticleDetailsScreen({super.key, required this.article});
+  const ArticleDetailsScreen({Key? key, required this.article}) : super(key: key);
 
   @override
   State<ArticleDetailsScreen> createState() => _ArticleDetailsScreenState();
@@ -17,11 +18,17 @@ class ArticleDetailsScreen extends StatefulWidget {
 
 class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   double textSizeFactor = 1.0; // Default text size factor
+  String? fullArticleContent;
+  bool isLoading = false;
+
+  final ArticleScraper scraper = ArticleScraper();
+
   void updateTextSize(double factor) {
     setState(() {
       textSizeFactor = factor;
     });
   }
+
   void shareToSocialMedia(String url, String title) {
     Share.share(
       '$title\nRead more at: $url',
@@ -48,6 +55,29 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
       '$title\nRead more at: $url',
       subject: 'Check out this article on WhatsApp!',
     );
+  }
+
+  Future<void> _fetchFullArticleContent() async {
+    setState(() => isLoading = true);
+    try {
+      final content = await scraper.scrapeArticleContent(widget.article.url);
+      setState(() {
+        fullArticleContent = content;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error scraping article: $e");
+      setState(() {
+        fullArticleContent = null;
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFullArticleContent();
   }
 
   @override
@@ -166,6 +196,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               ),
             ),
             SizedBox(height: 8.h),
+
             // Display image if available
             if (widget.article.urlToImage.isNotEmpty)
               CachedNetworkImage(
@@ -188,7 +219,6 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
             ),
             SizedBox(height: 10.h),
 
-
             Text(
               "Published At: ${widget.article.formattedPublishedAt}",
               style: TextStyle(
@@ -198,49 +228,37 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               ),
             ),
             SizedBox(height: 10.h),
+
             Text(
-              "Source name : ${widget.article.source?.name}",
+              "Source name: ${widget.article.source?.name}",
               style: TextStyle(
                 fontSize: 14.sp * textSizeFactor,
                 color: AppColor.secondaryTextColor(context),
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10.h),
-            // Description
-            Text(
-              widget.article.description ?? 'No description available.',
-              style: TextStyle(
-                fontSize: 16.sp * textSizeFactor,
-                color: AppColor.secondaryTextColor(context),
-              ),
-            ),
+
             SizedBox(height: 16.h),
 
-            // URL
-            Text(
-              widget.article.url,
-              style: TextStyle(
-                fontSize: 14.sp * textSizeFactor,
-                color: AppColor.linkColor(context),
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // Content (if available)
-            if (widget.article.content != null && widget.article.content!.isNotEmpty)
+            // Full article content from web scraping
+            if (isLoading)
+              Center(child: CircularProgressIndicator())
+            else if (fullArticleContent != null)
               Text(
-                widget.article.content!,
+                fullArticleContent!,
                 style: TextStyle(
                   fontSize: 16.sp * textSizeFactor,
                   color: AppColor.secondaryTextColor(context),
                 ),
+              )
+            else
+              Text(
+                "Could not load full article content.",
+                style: TextStyle(
+                  fontSize: 16.sp * textSizeFactor,
+                  color: Colors.grey,
+                ),
               ),
-            SizedBox(height: 16.h),
-
-            // Text Size Slider
-
           ],
         ),
       ),
