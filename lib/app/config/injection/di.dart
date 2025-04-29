@@ -19,6 +19,7 @@ import '../../feature/bookmark/data/datasources/bookmark_remote_datasource.dart'
 import '../../feature/bookmark/data/repositories/bookmark_repository_impl.dart';
 import '../../feature/bookmark/domain/repositories/favorite_repository.dart';
 import '../../feature/bookmark/domain/use_cases/get_bookmarks_use_case.dart';
+import '../../feature/bookmark/domain/use_cases/remove_bookmark_use_case.dart';
 import '../../feature/bookmark/domain/use_cases/save_bookmark_use_case.dart';
 import '../../feature/home/data/datasources/news_remote_datasource.dart';
 import '../../feature/home/data/repositories/news_repository_impl.dart';
@@ -44,7 +45,7 @@ Future<void> setupLocator() async {
 
   // Register ApiClient
   locator.registerLazySingleton<ApiClient>(
-      () => ApiClient(locator<DioService>().instance));
+          () => ApiClient(locator<DioService>().instance));
   // Register Firebase Auth and Google Sign-In
   locator.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
   locator.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
@@ -52,32 +53,32 @@ Future<void> setupLocator() async {
 
   // Register AuthRemoteDataSource
   locator.registerLazySingleton<AuthRemoteDataSource>(
-      () => AuthRemoteDataSourceImpl(
-            locator<FirebaseAuth>(),
-            locator<GoogleSignIn>(),
-          ));
+          () => AuthRemoteDataSourceImpl(
+        locator<FirebaseAuth>(),
+        locator<GoogleSignIn>(),
+      ));
 
   // Register AuthRepository
   locator.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
-        locator<AuthRemoteDataSource>(),
-      ));
+    locator<AuthRemoteDataSource>(),
+  ));
   // Use cases
   locator.registerLazySingleton(
-      () => SignInWithGoogle(locator.get<AuthRepository>()));
+          () => SignInWithGoogle(locator.get<AuthRepository>()));
   locator.registerLazySingleton(
-      () => SignInWithEmail(locator.get<AuthRepository>()));
+          () => SignInWithEmail(locator.get<AuthRepository>()));
   locator.registerLazySingleton(
-      () => RegisterWithEmail(locator.get<AuthRepository>()));
+          () => RegisterWithEmail(locator.get<AuthRepository>()));
   locator.registerLazySingleton(
           () => SignOutUser(locator.get<AuthRepository>()));
   locator.registerLazySingleton(() => UpdatePassword(locator.get<AuthRepository>()));
   locator.registerLazySingleton(() => GetUserInfo(locator.get<AuthRepository>()));
   locator.registerLazySingleton<ThemeLocalDataSource>(
-      () => ThemeLocalDataSource());
+          () => ThemeLocalDataSource());
 
   // Register Repositories
   locator.registerLazySingleton<ThemeRepository>(
-      () => ThemeRepositoryImpl(locator()));
+          () => ThemeRepositoryImpl(locator()));
 
   // Register Use Cases
   locator.registerLazySingleton(() => SaveThemePreference(locator()));
@@ -104,6 +105,7 @@ Future<void> setupLocator() async {
   // Register Bookmark Use Cases
   locator.registerLazySingleton(() => SaveBookmarkUseCase(locator.get<BookmarkRepository>()));
   locator.registerLazySingleton(() => GetBookmarksUseCase(locator.get<BookmarkRepository>()));
+  locator.registerLazySingleton(() => RemoveBookmarkUseCase(locator.get<BookmarkRepository>()));
 
   // Register Bookmark Controller
 
