@@ -176,7 +176,6 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               );
             },
           ),
-         //add icon read it later  , implement with hive
         ],
       ),
       body: SingleChildScrollView(
