@@ -21,7 +21,7 @@ class AppColor {
 
   static const Color primaryTextLight = Color(0xFF212121);
   static const Color secondaryTextLight = Color(0xFF757575);
-  static const Color primaryTextDark = Color(0xFFFFFFFF);
+  static const Color primaryTextDark = Color(0x00000000);
   static const Color secondaryTextDark = Color(0xFFBDBDBD);
 
 
@@ -34,7 +34,7 @@ class AppColor {
   static const Color softBlueAccent = Color(0xFF394867);
 
   static Color background(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark ? darkPrimary : offWhite;
+      Theme.of(context).brightness == Brightness.dark ? darkSurface : offWhite;
   static Color drawerBackground(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark ? softBlueAccent : lightGreyBlue;
 
@@ -42,7 +42,7 @@ class AppColor {
       Theme.of(context).brightness == Brightness.dark ? darkBlue : primaryBlue;
 
   static Color textColor(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark ? primaryTextDark : primaryTextLight;
+      Theme.of(context).brightness == Brightness.dark ? secondaryTextDark : primaryTextLight;
 
   static Color secondaryTextColor(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark ? secondaryTextDark : secondaryTextLight;

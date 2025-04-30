@@ -1,9 +1,6 @@
-// lib/app/feature/home/presentation/screens/article_details_screen.dart
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../domain/entities/article_entities.dart';
@@ -28,6 +25,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   void updateTextSize(double factor) {
     setState(() {
       textSizeFactor = factor;
+      _fetchFullArticleContent ;
     });
   }
 
@@ -61,7 +59,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
 
   Future<void> _fetchFullArticleContent() async {
     setState(() => isLoading = true);
-    final content = await scraper.scrapeArticleContent(widget.article.url);
+    final content = await scraper.scrapeArticleContent(widget.article.url, titleToRemove: widget.article.title,fontSize: 20 * textSizeFactor,);
     setState(() {
       fullArticleContent = content;
       isLoading = false;
@@ -71,58 +69,19 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchFullArticleContent();
+
+      _fetchFullArticleContent();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.white,
       appBar: AppBar(
-        title: Text("Article Details"),
+        title: Text("Article Details",),
         backgroundColor: AppColor.primaryColor(context),
         actions: [
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Share Article'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.facebook),
-                          title: Text('Facebook'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            shareToFacebook(widget.article.url, widget.article.title);
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.share),
-                          title: Text('Twitter'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            shareToTwitter(widget.article.url, widget.article.title);
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.share),
-                          title: Text('WhatsApp'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            shareToWhatsApp(widget.article.url, widget.article.title);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
           IconButton(
             icon: Icon(Icons.text_fields),
             onPressed: () {
@@ -174,6 +133,49 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               );
             },
           ),
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Share Article'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.facebook),
+                          title: Text('Facebook'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            shareToFacebook(widget.article.url, widget.article.title);
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.share),
+                          title: Text('Twitter'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            shareToTwitter(widget.article.url, widget.article.title);
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.share),
+                          title: Text('WhatsApp'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            shareToWhatsApp(widget.article.url, widget.article.title);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+         //add icon read it later  , implement with hive
         ],
       ),
       body: SingleChildScrollView(
@@ -185,8 +187,8 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               widget.article.title,
               style: TextStyle(
                 fontSize: 24.sp * textSizeFactor,
+                color: AppColor.softBlueAccent,
                 fontWeight: FontWeight.bold,
-                color: AppColor.textColor(context),
               ),
             ),
             SizedBox(height: 8.h),
@@ -207,7 +209,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               "Author: ${widget.article.author}",
               style: TextStyle(
                 fontSize: 14.sp * textSizeFactor,
-                color: AppColor.secondaryTextColor(context),
+                color: AppColor.softBlueAccent,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -217,7 +219,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               "Published At: ${widget.article.formattedPublishedAt}",
               style: TextStyle(
                 fontSize: 14.sp * textSizeFactor,
-                color: AppColor.secondaryTextColor(context),
+                color: AppColor.softBlueAccent,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -227,7 +229,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               "Source name: ${widget.article.source?.name}",
               style: TextStyle(
                 fontSize: 14.sp * textSizeFactor,
-                color: AppColor.secondaryTextColor(context),
+                color: AppColor.softBlueAccent,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -239,12 +241,23 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
             else if (fullArticleContent != null)
               fullArticleContent!
             else
-              Text(
-                "Could not load full article content.",
-                style: TextStyle(
-                  fontSize: 16.sp * textSizeFactor,
-                  color: Colors.grey,
-                ),
+              Column(
+                children: [
+                  Text(
+                    widget.article.content
+                        .replaceAll(RegExp(r'\[\+\d+ chars\]'), '')
+                        .trim() +
+                        (RegExp(r'\[\+\d+ chars\]').hasMatch(widget.article.content)
+                            ? " Could not load full article content....."
+                            : ''),
+                    style: TextStyle(
+                      fontSize: 16.sp * textSizeFactor,
+                      color: AppColor.textColor(context),
+                    ),
+                  ),
+
+
+                ],
               ),
           ],
         ),

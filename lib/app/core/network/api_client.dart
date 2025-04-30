@@ -58,6 +58,18 @@ class ApiClient {
     }
   }
 
+  Future<Response<dynamic>?> getRawResponse(String path, {Map<String, dynamic>? queryParameters}) async {
+    try {
+      final response = await _dio.get(path, queryParameters: queryParameters);
+      log('GET $path -> Response: ${response.statusCode}');
+      return response;
+    } on DioException catch (e) {
+      log('GET $path -> Error: ${e.response?.data}');
+      throw _extractErrorMessage(e);
+    }
+  }
+
+
   /// Private method to extract error message from DioException
   String _extractErrorMessage(DioException e) {
     if (e.type == DioExceptionType.connectionError) {

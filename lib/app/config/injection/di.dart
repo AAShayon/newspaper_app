@@ -21,6 +21,7 @@ import '../../feature/bookmark/domain/repositories/favorite_repository.dart';
 import '../../feature/bookmark/domain/use_cases/get_bookmarks_use_case.dart';
 import '../../feature/bookmark/domain/use_cases/remove_bookmark_use_case.dart';
 import '../../feature/bookmark/domain/use_cases/save_bookmark_use_case.dart';
+import '../../feature/home/data/datasources/news_local_datasources.dart';
 import '../../feature/home/data/datasources/news_remote_datasource.dart';
 import '../../feature/home/data/repositories/news_repository_impl.dart';
 import '../../feature/home/domain/repositories/news_repository.dart';
@@ -82,9 +83,13 @@ Future<void> setupLocator() async {
 
   // Register Use Cases
   locator.registerLazySingleton(() => SaveThemePreference(locator()));
+  locator.registerLazySingleton<NewsLocalDataSource>(() => NewsLocalDataSourceImpl());
 
   locator.registerLazySingleton<NewsRemoteDataSource>(() => NewsRemoteDataSourceImpl(locator<ApiClient>()));
-  locator.registerLazySingleton<NewsRepository>(() => NewsRepositoryImpl(locator<NewsRemoteDataSource>()));
+  locator.registerLazySingleton<NewsRepository>(() => NewsRepositoryImpl(
+    remoteDataSource: locator<NewsRemoteDataSource>(),
+    localDataSource: locator<NewsLocalDataSource>(),
+  ));
   locator.registerLazySingleton(() => GetTopHeadlines(locator.get<NewsRepository>()));
 
   locator.registerLazySingleton<BookmarkRemoteDataSource>(
