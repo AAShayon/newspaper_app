@@ -1,11 +1,17 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:newspaper_app/app/feature/home/presentation/utils/share_utils.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../domain/entities/article_entities.dart';
 import '../utils/article_scraper.dart';
+import '../widgets/article_content.dart';
+import '../widgets/article_image.dart';
+import '../widgets/article_metadata.dart';
+import '../widgets/article_title.dart';
+import '../widgets/share_tiles.dart';
+import '../widgets/text_size_dialog.dart';
+
 
 class ArticleDetailsScreen extends StatefulWidget {
   final ArticleEntity article;
@@ -26,41 +32,13 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   void updateTextSize(double factor) {
     setState(() {
       textSizeFactor = factor;
-      _fetchFullArticleContent ;
     });
   }
 
-  void shareToSocialMedia(String url, String title) {
-    Share.share(
-      '$title\nRead more at: $url',
-      subject: 'Check out this article!',
-    );
-  }
-
-  void shareToFacebook(String url, String title) {
-    Share.share(
-      '$title\nRead more at: $url',
-      subject: 'Check out this article on Facebook!',
-    );
-  }
-
-  void shareToTwitter(String url, String title) {
-    Share.share(
-      '$title\nRead more at: $url',
-      subject: 'Check out this article on Twitter!',
-    );
-  }
-
-  void shareToWhatsApp(String url, String title) {
-    Share.share(
-      '$title\nRead more at: $url',
-      subject: 'Check out this article on WhatsApp!',
-    );
-  }
 
   Future<void> _fetchFullArticleContent() async {
     setState(() => isLoading = true);
-    final content = await scraper.scrapeArticleContent(widget.article.url, titleToRemove: widget.article.title,fontSize: 20 * textSizeFactor,);
+    final content = await scraper.scrapeArticleContent(widget.article.url, titleToRemove: widget.article.title, fontSize: 20 * textSizeFactor);
     setState(() {
       fullArticleContent = content;
       isLoading = false;
@@ -70,9 +48,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   @override
   void initState() {
     super.initState();
-
-      _fetchFullArticleContent();
-
+    _fetchFullArticleContent();
   }
 
   @override
@@ -80,7 +56,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
     return Scaffold(
       backgroundColor: AppColor.white,
       appBar: AppBar(
-        title: Text("Article Details",),
+        title: Text("Article Details"),
         backgroundColor: AppColor.primaryColor(context),
         actions: [
           IconButton(
@@ -88,49 +64,14 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Select Text Size'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        RadioListTile<double>(
-                          title: Text('Small'),
-                          value: 0.8,
-                          groupValue: textSizeFactor,
-                          onChanged: (value) {
-                            if (value != null) {
-                              updateTextSize(value);
-                              Navigator.pop(context); // Close dialog
-                            }
-                          },
-                        ),
-                        RadioListTile<double>(
-                          title: Text('Medium'),
-                          value: 1.0,
-                          groupValue: textSizeFactor,
-                          onChanged: (value) {
-                            if (value != null) {
-                              updateTextSize(value);
-                              Navigator.pop(context); // Close dialog
-                            }
-                          },
-                        ),
-                        RadioListTile<double>(
-                          title: Text('Big'),
-                          value: 1.5,
-                          groupValue: textSizeFactor,
-                          onChanged: (value) {
-                            if (value != null) {
-                              updateTextSize(value);
-                              Navigator.pop(context); // Close dialog
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                builder: (context) => TextSizeDialog(
+                  textSizeFactor: textSizeFactor,
+                  onTextSizeChanged: (factor) {
+                    setState(() {
+                      textSizeFactor = factor;
+                    });
+                  },
+                ),
               );
             },
           ),
@@ -145,29 +86,26 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        ListTile(
-                          leading: Icon(Icons.facebook),
-                          title: Text('Facebook'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            shareToFacebook(widget.article.url, widget.article.title);
-                          },
+                        ShareToTile(
+                          platform: 'Facebook',
+                          icon: Icons.facebook,
+                          shareFunction: shareOnFacebook,
+                          articleUrl: widget.article.url,
+                          articleTitle: widget.article.title,
                         ),
-                        ListTile(
-                          leading: Icon(FontAwesomeIcons.twitter,),
-                          title: Text('Twitter'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            shareToTwitter(widget.article.url, widget.article.title);
-                          },
+                        ShareToTile(
+                          platform: 'Twitter',
+                          icon: FontAwesomeIcons.twitter,
+                          shareFunction: shareOnTwitter,
+                          articleUrl: widget.article.url,
+                          articleTitle: widget.article.title,
                         ),
-                        ListTile(
-                          leading: Icon( FontAwesomeIcons.whatsapp,),
-                          title: Text('WhatsApp'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            shareToWhatsApp(widget.article.url, widget.article.title);
-                          },
+                        ShareToTile(
+                          platform: 'WhatsApp',
+                          icon: FontAwesomeIcons.whatsapp,
+                          shareFunction: shareOnWhatsApp,
+                          articleUrl: widget.article.url,
+                          articleTitle: widget.article.title,
                         ),
                       ],
                     ),
@@ -183,82 +121,27 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.article.title,
-              style: TextStyle(
-                fontSize: 24.sp * textSizeFactor,
-                color: AppColor.softBlueAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            ArticleTitle(title: widget.article.title, textSizeFactor: textSizeFactor),
             SizedBox(height: 8.h),
 
-            // Display image if available
             if (widget.article.urlToImage.isNotEmpty)
-              CachedNetworkImage(
-                imageUrl: widget.article.urlToImage ?? 'https://via.placeholder.com/150',
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-                width: double.infinity,
-                height: 250.h,
-                fit: BoxFit.cover,
-              ),
+              ArticleImage(imageUrl: widget.article.urlToImage),
             SizedBox(height: 10.h),
 
-            Text(
-              "Author: ${widget.article.author}",
-              style: TextStyle(
-                fontSize: 14.sp * textSizeFactor,
-                color: AppColor.softBlueAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10.h),
-
-            Text(
-              "Published At: ${widget.article.formattedPublishedAt}",
-              style: TextStyle(
-                fontSize: 14.sp * textSizeFactor,
-                color: AppColor.softBlueAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10.h),
-
-            Text(
-              "Source name: ${widget.article.source?.name}",
-              style: TextStyle(
-                fontSize: 14.sp * textSizeFactor,
-                color: AppColor.softBlueAccent,
-                fontWeight: FontWeight.bold,
-              ),
+            ArticleMetadata(
+              author: widget.article.author ?? '',
+              publishedAt: widget.article.formattedPublishedAt,
+              sourceName: widget.article.source?.name,
+              textSizeFactor: textSizeFactor,
             ),
             SizedBox(height: 16.h),
 
-            // Full article content from web scraping
-            if (isLoading)
-              const Center(child: CircularProgressIndicator())
-            else if (fullArticleContent != null)
-              fullArticleContent!
-            else
-              Column(
-                children: [
-                  Text(
-                    widget.article.content
-                        .replaceAll(RegExp(r'\[\+\d+ chars\]'), '')
-                        .trim() +
-                        (RegExp(r'\[\+\d+ chars\]').hasMatch(widget.article.content)
-                            ? " Could not load full article content....."
-                            : ''),
-                    style: TextStyle(
-                      fontSize: 16.sp * textSizeFactor,
-                      color: AppColor.textColor(context),
-                    ),
-                  ),
-
-
-                ],
-              ),
+            ArticleContent(
+              isLoading: isLoading,
+              fullArticleContent: fullArticleContent,
+              articleContent: widget.article.content,
+              textSizeFactor: textSizeFactor,
+            ),
           ],
         ),
       ),
