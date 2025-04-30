@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../domain/entities/article_entities.dart';
@@ -153,7 +154,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                           },
                         ),
                         ListTile(
-                          leading: Icon(Icons.share),
+                          leading: Icon(FontAwesomeIcons.twitter,),
                           title: Text('Twitter'),
                           onTap: () {
                             Navigator.pop(context);
@@ -161,7 +162,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                           },
                         ),
                         ListTile(
-                          leading: Icon(Icons.share),
+                          leading: Icon( FontAwesomeIcons.whatsapp,),
                           title: Text('WhatsApp'),
                           onTap: () {
                             Navigator.pop(context);
