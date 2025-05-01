@@ -6,16 +6,19 @@ import '../models/news_model.dart';
 abstract class NewsLocalDataSource {
   Future<void> cacheNews(NewsModel newsModel);
   Future<NewsModel> getCachedNews();
-  Future<void> cacheScrapedArticle(ScrapedArticleEntity article);
-  Future<ScrapedArticleEntity> getCachedScrapedArticle(String url);
+  Future<void> cacheScrapedArticle(ScrapedArticleEntity scrapedArticle);
+  Future<ScrapedArticleEntity?> getCachedScrapedArticle(String url);
 }
 
 class NewsLocalDataSourceImpl implements NewsLocalDataSource {
 
   static const String _newsBox = 'newsBox';
   static const String _cacheKey = 'newsData';
-  static const String _scrapedArticlesBox = 'scrapedArticlesBox';
-  static const String _scrapedArticlesKey = 'scrapedArticles';
+  static const String _scrapedArticlesBox = 'scrapedArticles';
+
+  // static void registerAdapters() {
+  //   Hive.registerAdapter(ScrapedArticleEntityAdapter());
+  // }
 
   @override
   Future<void> cacheNews(NewsModel newsModel) async {
@@ -34,28 +37,13 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   }
   @override
   Future<void> cacheScrapedArticle(ScrapedArticleEntity article) async {
-    final box = await Hive.openBox(_scrapedArticlesBox);
-    final cachedArticles = box.get(_scrapedArticlesKey, defaultValue: {}) as Map;
-    cachedArticles[article.articleUrl] = {
-      'htmlContent': article.htmlContent,
-      'scrapedAt': article.scrapedAt.toIso8601String(),
-    };
-    await box.put(_scrapedArticlesKey, cachedArticles);
+    final box = await Hive.openBox<ScrapedArticleEntity>(_scrapedArticlesBox);
+    await box.put(article.articleUrl, article); // Store by URL as key
   }
 
   @override
-  Future<ScrapedArticleEntity> getCachedScrapedArticle(String url) async {
-    final box = await Hive.openBox(_scrapedArticlesBox);
-    final cachedArticles = box.get(_scrapedArticlesKey, defaultValue: {}) as Map;
-    final articleData = cachedArticles[url] as Map<String, dynamic>?;
-
-    if (articleData != null) {
-      return ScrapedArticleEntity(
-        articleUrl: url,
-        htmlContent: articleData['htmlContent'],
-        scrapedAt: DateTime.parse(articleData['scrapedAt']),
-      );
-    }
-    throw Exception('Article not found in cache');
+  Future<ScrapedArticleEntity?> getCachedScrapedArticle(String url) async {
+    final box = await Hive.openBox<ScrapedArticleEntity>(_scrapedArticlesBox);
+    return box.get(url); // Retrieve by URL
   }
 }

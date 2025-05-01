@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import '../../domain/entities/article_entities.dart';
 import '../../domain/entities/scraped_article_entity.dart';
 import '../../domain/usecases/get_top_headlines.dart';
@@ -19,6 +21,7 @@ class HomeController extends GetxController {
   Rx<ScrapedArticleEntity?> currentArticle = Rx<ScrapedArticleEntity?>(null);
   RxString articleError = ''.obs;
   RxString currentArticleTitle = ''.obs;
+  final RxList<String> readLaterArticles = <String>[].obs;
 
   // Fetch top headlines
   Future<void> fetchTopHeadlines() async {
@@ -31,8 +34,61 @@ class HomeController extends GetxController {
     );
     isLoading.value = false;
   }
+  // // Toggle article in read later list
+  // Future<void> toggleReadLater(String articleUrl) async {
+  //   final box = await Hive.openBox('read_later_articles');
+  //
+  //   if (readLaterArticles.contains(articleUrl)) {
+  //     readLaterArticles.add(articleUrl);
+  //     await box.put('articles', readLaterArticles.toList());
+  //     await saveArticleForLater(articleUrl);
+  //     Get.snackbar(backgroundColor: Colors.grey,'Success', 'Added to Read Later');
+  //
+  //   } else {
+  //     log("Before removal: $readLaterArticles");
+  //     readLaterArticles.remove(articleUrl);
+  //     log("After removal: $readLaterArticles");
+  //
+  //     await box.put('articles', readLaterArticles.toList());
+  //
+  //     Get.snackbar(backgroundColor: Colors.grey,'Success', 'Removed from Read Later');
+  //   }
+  // }
+  Future<void> toggleReadLater(String articleUrl) async {
+    final box = await Hive.openBox('read_later_articles');
 
-  // Load article content with caching
+    if (readLaterArticles.contains(articleUrl)) {
+      readLaterArticles.remove(articleUrl);
+      Get.snackbar(
+        backgroundColor: Colors.grey,
+        'Success',
+        'Removed from Read Later',
+      );
+    } else {
+      readLaterArticles.add(articleUrl);
+      Get.snackbar(
+        backgroundColor: Colors.grey,
+        'Success',
+        'Added to Read Later',
+      );
+    }
+
+    await box.put('articles', readLaterArticles);
+  }
+
+  Future<void> saveArticleForLater(String url) async {
+    // This will trigger scraping only once
+    final result = await getCachedArticle.call(url);
+    result.fold(
+          (failure) {
+        Get.snackbar('Error', failure);
+      },
+          (scrapedArticle) {
+        Get.snackbar('Success', 'Article saved for later reading.');
+      },
+    );
+  }
+
   Future<void> loadArticleContent(String url) async {
     isLoading.value = true;
     articleError.value = '';

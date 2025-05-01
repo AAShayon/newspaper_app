@@ -4,7 +4,6 @@ import '../../../../core/utils/helper/helper_methods.dart';
 import '../../domain/entities/news_entity.dart';
 import '../../domain/entities/scraped_article_entity.dart';
 import '../../domain/repositories/news_repository.dart';
-import '../datasources/article_scraper_data_source.dart';
 import '../datasources/news_local_datasources.dart';
 import '../datasources/news_remote_datasource.dart';
 
@@ -52,6 +51,7 @@ class NewsRepositoryImpl implements NewsRepository {
           htmlContent: htmlContent,
           scrapedAt: DateTime.now(),
         );
+
         await localDataSource.cacheScrapedArticle(scrapedArticle);
         return Right(scrapedArticle);
       } catch (e) {
@@ -60,9 +60,13 @@ class NewsRepositoryImpl implements NewsRepository {
     } else {
       try {
         final cachedArticle = await localDataSource.getCachedScrapedArticle(url);
-        return Right(cachedArticle);
-      } catch (_) {
-        return const Left('No internet and no cached article available.');
+        if (cachedArticle != null) {
+          return Right(cachedArticle);
+        } else {
+          return const Left('No internet and no cached article available.');
+        }
+      } catch (e) {
+        return Left('No internet and no cached article available.');
       }
     }
   }
