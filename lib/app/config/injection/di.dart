@@ -26,6 +26,7 @@ import '../../feature/home/data/datasources/news_remote_datasource.dart';
 import '../../feature/home/data/repositories/news_repository_impl.dart';
 import '../../feature/home/domain/repositories/news_repository.dart';
 import '../../feature/home/domain/usecases/get_top_headlines.dart';
+import '../../feature/home/domain/usecases/scrape_article.dart';
 import '../../feature/settings/data/datasouces/theme_local_datasource.dart';
 import '../../feature/settings/data/repositories/theme_repository_impl.dart';
 import '../../feature/settings/domain/repositories/theme_repositories.dart';
@@ -84,13 +85,13 @@ Future<void> setupLocator() async {
   // Register Use Cases
   locator.registerLazySingleton(() => SaveThemePreference(locator()));
   locator.registerLazySingleton<NewsLocalDataSource>(() => NewsLocalDataSourceImpl());
-
   locator.registerLazySingleton<NewsRemoteDataSource>(() => NewsRemoteDataSourceImpl(locator<ApiClient>()));
   locator.registerLazySingleton<NewsRepository>(() => NewsRepositoryImpl(
     remoteDataSource: locator<NewsRemoteDataSource>(),
     localDataSource: locator<NewsLocalDataSource>(),
   ));
   locator.registerLazySingleton(() => GetTopHeadlines(locator.get<NewsRepository>()));
+  locator.registerLazySingleton(() => GetCachedArticle(locator.get<NewsRepository>()));
 
   locator.registerLazySingleton<BookmarkRemoteDataSource>(
         () => BookmarkRemoteDataSourceImpl(locator.get<FirebaseFirestore>()),
