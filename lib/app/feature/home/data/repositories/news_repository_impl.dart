@@ -63,10 +63,10 @@ class NewsRepositoryImpl implements NewsRepository {
         if (cachedArticle != null) {
           return Right(cachedArticle);
         } else {
-          return const Left('No internet and no cached article available.');
+          return const Left('Failed to Load Full Content');
         }
       } catch (e) {
-        return Left('No internet and no cached article available.');
+        return Left('Failed to Load Full Content');
       }
     }
   }
