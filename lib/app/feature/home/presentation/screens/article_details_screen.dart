@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:newspaper_app/app/config/theme/color.dart';
-import 'package:newspaper_app/app/feature/home/presentation/utils/share_utils.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../domain/entities/article_entities.dart';
 import '../utils/article_scraper.dart';
+import '../utils/share_utils.dart';
 import '../widgets/article_content.dart';
 import '../widgets/article_image.dart';
 import '../widgets/article_metadata.dart';
 import '../widgets/article_title.dart';
-import '../widgets/share_tiles.dart';
 import '../widgets/text_size_dialog.dart';
 import '../controller/home_controller.dart';
 
@@ -54,8 +52,11 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
         ),
         IconButton(
           icon: const Icon(Icons.share),
-          onPressed: () => _showShareDialog(),
+          onPressed: () {
+            shareArticle(context, widget.article.url, widget.article.title);
+          },
         ),
+
       ],
     );
   }
@@ -152,41 +153,6 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
       builder: (context) => TextSizeDialog(
         textSizeFactor: controller.textSizeFactor.value,
         onTextSizeChanged: controller.updateTextSize,
-      ),
-    );
-  }
-
-  void _showShareDialog() {
-    showDialog(
-      context: Get.context!,
-      builder: (context) => AlertDialog(
-        title: const Text('Share Article'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ShareToTile(
-              platform: 'Facebook',
-              icon: Icons.facebook,
-              shareFunction: shareOnFacebook,
-              articleUrl: widget.article.url,
-              articleTitle: widget.article.title,
-            ),
-            ShareToTile(
-              platform: 'Twitter',
-              icon: FontAwesomeIcons.twitter,
-              shareFunction: shareOnTwitter,
-              articleUrl: widget.article.url,
-              articleTitle: widget.article.title,
-            ),
-            ShareToTile(
-              platform: 'WhatsApp',
-              icon: FontAwesomeIcons.whatsapp,
-              shareFunction: shareOnWhatsApp,
-              articleUrl: widget.article.url,
-              articleTitle: widget.article.title,
-            ),
-          ],
-        ),
       ),
     );
   }

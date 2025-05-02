@@ -1,16 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-void shareArticle(String url, String title) {
-  Share.share('$title\nRead more at: $url', subject: 'Check out this article!');
-}
 
-void shareOnFacebook(String url, String title) {
-  Share.share('$title\nRead more at: $url', subject: 'Check out this article on Facebook!');
-}
+void shareArticle(BuildContext context, String url, String title) async {
+  final box = context.findRenderObject() as RenderBox?;
 
-void shareOnTwitter(String url, String title) {
-  Share.share('$title\nRead more at: $url', subject: 'Check out this article on Twitter!');
-}
+  final shareResult = await SharePlus.instance.share(
+    ShareParams(
+      text: '$title\nRead more at: $url',
+      subject: 'Check out this article!',
+      sharePositionOrigin: box!.localToGlobal(Offset.zero) & (box.size ),
+    ),
+  );
 
-void shareOnWhatsApp(String url, String title) {
-  Share.share('$title\nRead more at: $url', subject: 'Check out this article on WhatsApp!');
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text("Share result: ${shareResult.status.name}")),
+  );
 }

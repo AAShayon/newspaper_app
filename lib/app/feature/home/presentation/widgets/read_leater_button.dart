@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import 'package:newspaper_app/app/feature/home/domain/entities/article_entities.dart';
@@ -26,8 +25,8 @@ class ReadLaterButton extends StatelessWidget {
       final isReadLater = controller.readLaterArticles.contains(article.url);
 
       return IconButton(
-        icon: FaIcon(
-          FontAwesomeIcons.bookmark,
+        icon: Icon(
+          Icons.bookmark,
           color: isReadLater ? Colors.red : Colors.grey,
         ),
         onPressed: () => controller.toggleReadLater(article.url),
