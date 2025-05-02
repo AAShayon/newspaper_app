@@ -44,19 +44,19 @@ jobs:
         run: |
           echo "android {
             signingConfigs {
-              release {
-                storeFile = file('newspaper_app.jks')
-                storePassword = '$ANDROID_STORE_PASSWORD'
-                keyAlias = '$ANDROID_KEY_ALIAS'
-                keyPassword = '$ANDROID_KEY_PASSWORD'
+              create(\"release\") {
+                storeFile = file(\"newspaper_app.jks\")
+                storePassword = \"$ANDROID_STORE_PASSWORD\"
+                keyAlias = \"$ANDROID_KEY_ALIAS\"
+                keyPassword = \"$ANDROID_KEY_PASSWORD\"
               }
             }
             buildTypes {
-              release {
-                signingConfig = signingConfigs.release
+              getByName(\"release\") {
+                signingConfig = signingConfigs.getByName(\"release\")
               }
             }
-          }" >> android/app/build.gradle
+          }" >> android/app/build.gradle.kts
 
       - name: Build APK
         run: flutter build apk --release
