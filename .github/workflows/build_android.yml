@@ -6,7 +6,6 @@ on:
       - 'v1.0.3'
 
 jobs:
-  # === ANDROID BUILD JOB ===
   build-android:
     runs-on: ubuntu-latest
 
@@ -40,6 +39,7 @@ jobs:
 
       - name: Configure Gradle with keystore info
         run: |
+          sed -i 's|signingConfig = signingConfigs.getByName("release")|signingConfig = signingConfigs.create("release")|' android/app/build.gradle.kts
           sed -i 's|keyAlias = "newspaper_app"|keyAlias = System.getenv("ANDROID_KEY_ALIAS")|' android/app/build.gradle.kts
           sed -i 's|keyPassword = "123456"|keyPassword = System.getenv("ANDROID_KEY_PASSWORD")|' android/app/build.gradle.kts
           sed -i 's|storePassword = "123456"|storePassword = System.getenv("ANDROID_STORE_PASSWORD")|' android/app/build.gradle.kts

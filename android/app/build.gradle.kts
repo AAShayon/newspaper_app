@@ -27,18 +27,8 @@ android {
         versionName = flutter.versionName
     }
 
-//    signingConfigs {
-//        create("release") {
-//            storeFile = file("newspaper_app.jks")
-//            keyAlias = "newspaper_app"
-//            keyPassword = "123456"
-//            storePassword = "123456"
-//        }
-//    }
-
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
