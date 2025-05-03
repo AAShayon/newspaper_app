@@ -279,12 +279,23 @@ Then run:
 ```bash
 flutter pub get
 ```
+---
+
+### 🚀 CI/CD Pipeline
+
+You've already implemented CI/CD using GitHub Actions:
+- Builds Android APK
+- Tags release (e.g., `v1.1.1`)
+- Uploads artifacts and creates a GitHub Release
+
+Output example:
+🔗 [GitHub Release](https://github.com/AAShayon/newspaper_app/releases/tag/v1.1.1)
 
 ---
 
 ## 📥 APK Download
 
-You can download the working APK from [here](https://drive.google.com/drive/folders/1tnezHqW4LRDlBoeEfxjTYD5IgxZGuZFe?usp=sharing).
+Download the latest version: [App Release v1.1.1](https://github.com/AAShayon/newspaper_app/releases/download/v1.1.1/app-release.apk)
 
 
 ## 📌 Future Improvements
