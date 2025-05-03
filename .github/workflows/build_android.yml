@@ -6,6 +6,7 @@ on:
       - 'v1.0.3'
 
 jobs:
+  # === ANDROID BUILD JOB ===
   build-android:
     runs-on: ubuntu-latest
 
@@ -28,37 +29,26 @@ jobs:
         run: flutter pub get
 
       - name: Run tests (Optional)
+        if: startsWith(github.ref, 'refs/tags/v')  # This ensures tests only run for version tags
         run: flutter test --machine | tee result.json
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
 
       - name: Decode and save Android keystore
         run: |
-          echo "$ANDROID_KEYSTORE" | base64 --decode > newspaper_app.jks
+          echo "$ANDROID_KEYSTORE" | base64 --decode > android/app/newspaper_app.jks
         env:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
 
       - name: Configure Gradle with keystore info
         run: |
-          echo "android {
-            signingConfigs {
-              create(\"release\") {
-                storeFile = file(\"newspaper_app.jks\")
-                storePassword = \"$ANDROID_STORE_PASSWORD\"
-                keyAlias = \"$ANDROID_KEY_ALIAS\"
-                keyPassword = \"$ANDROID_KEY_PASSWORD\"
-              }
-            }
-            buildTypes {
-              getByName(\"release\") {
-                signingConfig = signingConfigs.getByName(\"release\")
-              }
-            }
-          }" >> android/app/build.gradle.kts
+          sed -i 's|keyAlias = "newspaper_app"|keyAlias = System.getenv("ANDROID_KEY_ALIAS")|' android/app/build.gradle.kts
+          sed -i 's|keyPassword = "123456"|keyPassword = System.getenv("ANDROID_KEY_PASSWORD")|' android/app/build.gradle.kts
+          sed -i 's|storePassword = "123456"|storePassword = System.getenv("ANDROID_STORE_PASSWORD")|' android/app/build.gradle.kts
+        env:
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
 
-      - name: Build APK
+      - name: Build APK (release)
         run: flutter build apk --release
 
       - name: Upload APK Artifact
