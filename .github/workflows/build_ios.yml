@@ -3,7 +3,7 @@ name: Build iOS IPA
 on:
   push:
     tags:
-      - 'v1.2.1'
+      - 'v1.1.1'
 
 jobs:
   build-ios:
@@ -52,13 +52,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: build/ios/iphoneos/*.ipa
+          files: build/ios/ipa/*.ipa
 
       - name: Create GitHub Release and upload IPA
         uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
-          files: build/ios/iphoneos/*.ipa
+          files: build/ios/ipa/*.ipa
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
