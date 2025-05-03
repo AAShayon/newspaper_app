@@ -27,14 +27,14 @@ android {
         versionName = flutter.versionName
     }
 
-    signingConfigs {
-        create("release") {
-            storeFile = file("newspaper_app.jks")
-            keyAlias = "newspaper_app"
-            keyPassword = "123456"
-            storePassword = "123456"
-        }
-    }
+//    signingConfigs {
+//        create("release") {
+//            storeFile = file("newspaper_app.jks")
+//            keyAlias = "newspaper_app"
+//            keyPassword = "123456"
+//            storePassword = "123456"
+//        }
+//    }
 
     buildTypes {
         release {
