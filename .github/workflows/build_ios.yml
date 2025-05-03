@@ -3,7 +3,7 @@ name: Build iOS IPA
 on:
   push:
     tags:
-      - 'v1.2.0'
+      - 'v1.2.1'
 
 jobs:
   build-ios:
@@ -61,4 +61,4 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: build/ios/iphoneos/*.ipa
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
