@@ -3,7 +3,7 @@ name: Build Android APK
 on:
   push:
     tags:
-      - 'v1.1.0'
+      - 'v1.2.0'
 
 jobs:
   build-android:
@@ -24,25 +24,24 @@ jobs:
         with:
           flutter-version: '3.29.3'
 
-      - name: Get dependencies
+      - name: Get Flutter dependencies
         run: flutter pub get
 
       - name: Run tests (Optional)
         if: startsWith(github.ref, 'refs/tags/v')
         run: flutter test --machine | tee result.json
 
-      - name: Decode and save Android keystore
-        run: |
-          echo "$ANDROID_KEYSTORE" | base64 --decode > android/app/newspaper_app.jks
+      - name: Decode Android keystore
+        run: echo "$ANDROID_KEYSTORE" | base64 --decode > android/app/newspaper_app.jks
         env:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
 
-      - name: Configure Gradle with keystore info
+      - name: Configure keystore in Gradle
         run: |
-          sed -i 's|signingConfig = signingConfigs.getByName("release")|signingConfig = signingConfigs.create("release")|' android/app/build.gradle.kts
-          sed -i 's|keyAlias = "newspaper_app"|keyAlias = System.getenv("ANDROID_KEY_ALIAS")|' android/app/build.gradle.kts
-          sed -i 's|keyPassword = "123456"|keyPassword = System.getenv("ANDROID_KEY_PASSWORD")|' android/app/build.gradle.kts
-          sed -i 's|storePassword = "123456"|storePassword = System.getenv("ANDROID_STORE_PASSWORD")|' android/app/build.gradle.kts
+          sed -i 's|keyAlias = ".*"|keyAlias = System.getenv("ANDROID_KEY_ALIAS")|' android/key.properties
+          sed -i 's|keyPassword = ".*"|keyPassword = System.getenv("ANDROID_KEY_PASSWORD")|' android/key.properties
+          sed -i 's|storePassword = ".*"|storePassword = System.getenv("ANDROID_STORE_PASSWORD")|' android/key.properties
+          sed -i 's|storeFile = file(".*")|storeFile = file("newspaper_app.jks")|' android/key.properties
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
@@ -56,3 +55,12 @@ jobs:
         with:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create GitHub Release and upload APK
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
